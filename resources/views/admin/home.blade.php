@@ -10,39 +10,13 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-3 col-xs-6">
-                        <a href="#" style="color: black">
+                        <a href="{{route('listUsersIndex')}}" style="color: black">
                             <div class="info-box">
                                 <span class="info-box-icon" style="background-color: #0091D6;"><i
-                                        class="fas fa-external-link-square-alt"></i></span>
+                                        class="fa fa-users"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">User Listing</span>
-                                    <span class="info-box-number">0</span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="col-lg-3 col-xs-6">
-                        <a href="#" style="color: black">
-                            <div class="info-box">
-                                <span class="info-box-icon" style="background-color: #0091D6;"><i
-                                        class="fas fa-exchange-alt"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Buyer listings</span>
-                                    <span class="info-box-number">0</span>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-
-                    <div class="col-lg-3 col-xs-6">
-                        <a href="#" style="color: black">
-                            <div class="info-box">
-                                <span class="info-box-icon" style="background-color: #0091D6;"><i
-                                        class="fas fa-file-invoice"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Seller Quote</span>
-                                    <span class="info-box-number">0</span>
+                                    <span class="info-box-number">{{$user_count}}</span>
                                 </div>
                             </div>
                         </a>

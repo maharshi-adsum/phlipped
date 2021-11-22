@@ -34,12 +34,8 @@ Route::group(['middleware' => 'adminAuth'], function ()
 
     Route::get('index','DashboardController@admin')->name('index');
 
-    Route::group(['prefix' => '/manage_stock'], function(){
-        Route::get('stockIndex','StockController@stockIndex')->name('stockIndex');
-        Route::post('listStock','StockController@listStock')->name('listStock');
-        Route::post('addUpdateStock','StockController@addUpdateStock')->name('addUpdateStock');
-        Route::get('editStock','StockController@editStock')->name('editStock');
-        Route::post('deleteStock','StockController@deleteStock')->name('deleteStock');
-        Route::post('stockChangeActiveStatus','StockController@stockChangeActiveStatus')->name('stockChangeActiveStatus');
+    Route::group(['prefix' => '/manage_users'], function(){
+        Route::get('listUsersIndex','UserController@listUsersIndex')->name('listUsersIndex');
+        Route::post('usersList','UserController@usersList')->name('usersList');
     });
 });

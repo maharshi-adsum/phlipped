@@ -131,7 +131,7 @@
                             </a>
                         </li>
 
-                        @if(Request::is('manage_tax_category/taxCategoryIndex'))
+                        @if(Request::is('manage_users/listUsersIndex'))
                         @php($class="menu-open")
                         @php($active="active1")
                         @else
@@ -139,9 +139,9 @@
                         @php($active="")
                         @endif
                         <li class="nav-item">
-                            <a href="#" class="nav-link active-hover {{$active}}">
-                                <i class="fas fa-percentage nav-icon"></i>
-                                <p>Tax Category</p>
+                            <a href="{{route('listUsersIndex')}}" class="nav-link active-hover {{$active}}">
+                                <i class="fa fa-users nav-icon"></i>
+                                <p>Manage User Listing</p>
                             </a>
                         </li>
                     </ul>
