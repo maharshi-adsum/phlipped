@@ -686,6 +686,7 @@ class AuthController extends Controller
                 {
                     $user->password = Hash::make($input['new_password']);
                     $user->save();
+                    unset($user['updated_at']);
                     return $this->successResponse($user->toArray(),('Your password successfully saved'));
                 }
                 else
@@ -786,8 +787,8 @@ class AuthController extends Controller
                 break;
             case 'forgetPassword':
                 $params = [
-                    'country_code' => 'required',
-                    'phone_number' => 'required|numeric',
+                    'country_code' => 'required|exists:users,country_code',
+                    'phone_number' => 'required|exists:users,phone_number',
                 ];
                 break;
             case 'otpVerified':

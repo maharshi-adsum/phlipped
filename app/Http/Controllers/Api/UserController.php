@@ -178,6 +178,13 @@ class UserController extends Controller
         try{
             $input = $request->all();
 
+            $requiredParams = $this->requiredRequestParams('user_profile_get');
+            $validator = Validator::make($input, $requiredParams);
+            if ($validator->fails()) 
+            {
+                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+            }
+
             if($input['user_id'] != Auth::user()->id)
             {
                 return $this->sendBadRequest('Unauthorized access');
@@ -247,7 +254,7 @@ class UserController extends Controller
                     'fullname' => 'required',
                     'email' => 'required|unique:users,email,'.$id,
                     'country_code' => 'required',
-                    'phone_number' => 'required',
+                    'phone_number' => 'required|unique:users,phone_number,'.$id,
                     'user_image' => 'required',
                 ];
                 break;
