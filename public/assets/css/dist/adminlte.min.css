@@ -14196,7 +14196,7 @@ a.text-muted:hover {
 }
 
 .admin-color {
-    background-color: #35666B !important;
+    background-color: #0091D6 !important;
 }
 
 .admin-btn {
@@ -14216,11 +14216,11 @@ a.text-muted:hover {
 }
 
 .action-button button:hover{
-   background-color: #35666B;
+   background-color: #0091D6;
 }
 
 .action-button .active2{
-   background-color: #35666B;
+   background-color: #0091D6;
 }
 
 .action-button button a{
@@ -14228,7 +14228,7 @@ a.text-muted:hover {
 }
 
 .star-rating {
-    color: #35666B;
+    color: #0091D6;
  }
 
 .border-button{

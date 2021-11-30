@@ -82,7 +82,7 @@
                     <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
                 </li>
             </ul>
-            <ul class="navbar-nav ml-auto">
+            {{-- <ul class="navbar-nav ml-auto">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item dropdown">
                         <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
@@ -94,10 +94,33 @@
                             <a class="dropdown-item" href="{{route('admin-logout')}}">Logout
                             </a>
 
-                            {{-- <a class="dropdown-item" href="#">Change Password</a> --}}
+                            <a class="dropdown-item" href="{{route('admin-password')}}">Change Password</a>
                         </div>
                     </li>
                 </ul>
+            </ul> --}}
+            <ul class="ml-auto nav navbar-nav custom-nav py-2">
+                <li class="dropdown user user-menu open">
+                    <a href="#" class="dropdown-toggle user-toggle" data-toggle="dropdown" aria-expanded="true">
+                        <img src="@if(session('profile_image')){{session('profile_image')}}@else{{asset('public/logo_www.svg')}}@endif" class="user-image">
+                        <span class="hidden-xs text-dark"><b>{{session('user')}}</b></span>
+                    </a>
+                    <ul class="dropdown-menu user-card">
+                        <li class="user-header">
+                            <img src="@if(session('profile_image')){{session('profile_image')}}@else{{asset('public/logo_www.svg')}}@endif" class="img-circle" alt="User Image">
+                            <p>
+                                {{session('first_name')}} {{session('last_name')}}
+                                {{session('email')}}
+                            </p>
+                        </li>
+                        <li class="user-footer">
+                            <a href="{{route('setting')}}" class="btn btn-default float-left">Settings</a>
+                            <div class="pull-right">
+                                <a href="{{route('admin-logout')}}" class="btn btn-default">Sign out</a>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </nav>
         <!-- /.navbar -->
@@ -142,6 +165,20 @@
                             <a href="{{route('listUsersIndex')}}" class="nav-link active-hover {{$active}}">
                                 <i class="fa fa-users nav-icon"></i>
                                 <p>Manage User Listing</p>
+                            </a>
+                        </li>
+
+                        @if(Request::is('manage_setting/setting'))
+                        @php($class="menu-open")
+                        @php($active="active1")
+                        @else
+                        @php($class="")
+                        @php($active="")
+                        @endif
+                        <li class="nav-item">
+                            <a href="{{route('setting')}}" class="nav-link active-hover {{$active}}">
+                                <i class="fa fa-users nav-icon"></i>
+                                <p>Manage Setting</p>
                             </a>
                         </li>
                     </ul>

@@ -23,4 +23,13 @@ class Admin extends Authenticatable
         'password', 'remember_token',
     ];
     protected $guard = 'admin';
+
+    public function getprofileImageAttribute($value)
+	{
+        if($value){
+    		return asset('public/upload/profile_image/'.$value);
+        } else {
+            return asset('public/assets/images/user-noimage.png');
+        }
+	}
 }

@@ -38,4 +38,10 @@ Route::group(['middleware' => 'adminAuth'], function ()
         Route::get('listUsersIndex','UserController@listUsersIndex')->name('listUsersIndex');
         Route::post('usersList','UserController@usersList')->name('usersList');
     });
+
+    Route::group(['prefix' => '/manage_setting'], function(){
+        Route::get('setting','LoginController@adminSetting')->name('setting');
+        Route::post('addUpdateAdminProfile','LoginController@addUpdateAdminProfile')->name('addUpdateAdminProfile');
+        Route::post('addUpdateAdminPassword','LoginController@addUpdateAdminPassword')->name('addUpdateAdminPassword');
+    });
 });

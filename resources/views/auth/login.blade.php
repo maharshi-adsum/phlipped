@@ -21,7 +21,7 @@
         .main-content {
             width: 75%;
             border-radius: 20px;
-            box-shadow: 0 5px 5px #35666B;
+            box-shadow: 0 5px 5px #0091D6;
             margin: 5em auto;
             display: flex;
         }
@@ -65,7 +65,7 @@
             transition: all .5s ease;
         }
         .form__input:focus {
-            border-bottom-color: #35666B;
+            border-bottom-color: #0091D6;
             box-shadow: 0 0 5px rgba(0, 80, 80, .4);
             border-radius: 4px;
         }
@@ -73,20 +73,20 @@
             transition: all .5s ease;
             width: 70%;
             border-radius: 30px;
-            color: #35666B;
+            color: #0091D6;
             font-weight: 600;
             background-color: #fff;
-            border: 1px solid #35666B;
+            border: 1px solid #0091D6;
             margin-top: 1.5em;
             margin-bottom: 1em;
         }
         .btn:hover,
         .btn:focus {
-            background-color: #35666B;
+            background-color: #0091D6;
             color: #fff;
         }
         .click {
-            color: #35666B;
+            color: #0091D6;
         }
         .logo {
             width: 100%;
