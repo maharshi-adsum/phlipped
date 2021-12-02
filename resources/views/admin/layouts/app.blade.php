@@ -47,6 +47,8 @@
     <link rel="stylesheet" href="{{ asset('public/toggle.css')}}">
     <link rel="stylesheet" href="{{ asset('public/assets/css/custom.css')}}">
     <link href="{{asset('public/assets/izitoast/css/iziToast.min.css')}}" rel="stylesheet">
+    <link rel="stylesheet" href="{{asset('public/owl-carousel/owl.carousel.min.css')}}">
+    <link rel="stylesheet" href="{{asset('public/owl-carousel/owl.theme.default.min.css')}}">
     @yield("extra_css")
     <style type="text/css">
         tfoot input {
@@ -67,6 +69,55 @@
             margin-left: auto;
             margin-right: auto;
             width: 100%;
+        }
+
+        .slider .owl-dots {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+        }
+
+        .slider .owl-nav {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            right: 20px;
+            transform: translateY(-50%);
+        }
+
+        .slider .owl-nav button.owl-prev,
+        .slider .owl-nav button.owl-next {
+            float: left;
+            height: 50px;
+            width: 50px;
+            font-size: 45px;
+            line-height: 45px;
+            background: #747474;
+            border-radius: 50%;
+            font-weight: 600;
+            border: 0;
+            opacity: .5;
+            color: #fff;
+            outline: none;
+        }
+
+        .slider .owl-nav button.owl-prev:hover,
+        .slider .owl-nav button.owl-next:hover {
+
+            background: #747474;
+            opacity: 1;
+        }
+
+        .slider .owl-nav button span {
+            height: 100%;
+            width: 100%;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .slider .owl-nav button.owl-next {
+            float: right;
         }
 
     </style>
@@ -102,12 +153,14 @@
             <ul class="ml-auto nav navbar-nav custom-nav py-2">
                 <li class="dropdown user user-menu open">
                     <a href="#" class="dropdown-toggle user-toggle" data-toggle="dropdown" aria-expanded="true">
-                        <img src="@if(session('profile_image')){{session('profile_image')}}@else{{asset('public/logo_www.svg')}}@endif" class="user-image">
+                        <img src="@if(session('profile_image')){{session('profile_image')}}@else{{asset('public/logo_www.svg')}}@endif"
+                            class="user-image">
                         <span class="hidden-xs text-dark"><b>{{session('user')}}</b></span>
                     </a>
                     <ul class="dropdown-menu user-card">
                         <li class="user-header">
-                            <img src="@if(session('profile_image')){{session('profile_image')}}@else{{asset('public/logo_www.svg')}}@endif" class="img-circle" alt="User Image">
+                            <img src="@if(session('profile_image')){{session('profile_image')}}@else{{asset('public/logo_www.svg')}}@endif"
+                                class="img-circle" alt="User Image">
                             <p>
                                 {{session('first_name')}} {{session('last_name')}}
                                 {{session('email')}}
@@ -126,10 +179,9 @@
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar elevation-4">
+        <aside class="main-sidebar elevation-4" style="background-color: white">
             <a href="{{ route('index')}}" class="brand-link">
-                <img src="{{ asset('public/phlippedlogo.png' ) }}" alt="phlipped logo" class="brand-image center"
-                    >
+                <img src="{{ asset('public/phlippedlogo.png' ) }}" alt="phlipped logo" class="brand-image center">
                 <p class="brand-text"></p>
             </a>
             <hr>
@@ -165,6 +217,20 @@
                             <a href="{{route('listUsersIndex')}}" class="nav-link active-hover {{$active}}">
                                 <i class="fa fa-users nav-icon"></i>
                                 <p>Manage User Listing</p>
+                            </a>
+                        </li>
+
+                        @if(Request::is('manage_buyer_product/buyerProductIndex'))
+                        @php($class="menu-open")
+                        @php($active="active1")
+                        @else
+                        @php($class="")
+                        @php($active="")
+                        @endif
+                        <li class="nav-item">
+                            <a href="{{route('buyerProductIndex')}}" class="nav-link active-hover {{$active}}">
+                                <i class="fa fa-users nav-icon"></i>
+                                <p>Manage Buyer Product</p>
                             </a>
                         </li>
 
@@ -264,6 +330,7 @@
     <script src="{{ asset('public/assets/js/sweetalert.min.js') }}"></script>
     <script src="{{asset('public/assets/izitoast/js/iziToast.min.js')}}"></script>
     <script type="text/javascript" src="{{ asset('public/assets/js/pnotify.custom.min.js')}}"></script>
+    <script src="{{ asset('public/owl-carousel/owl.carousel.min.js')}}"></script>
     <!-- AdminLTE for demo purposes -->
     @yield('script')
     {{-- <script src="{{asset('public/vendor/datatables/buttons.server-side.js')}}"></script> --}}

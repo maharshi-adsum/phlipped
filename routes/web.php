@@ -44,4 +44,11 @@ Route::group(['middleware' => 'adminAuth'], function ()
         Route::post('addUpdateAdminProfile','LoginController@addUpdateAdminProfile')->name('addUpdateAdminProfile');
         Route::post('addUpdateAdminPassword','LoginController@addUpdateAdminPassword')->name('addUpdateAdminPassword');
     });
+
+    Route::group(['prefix' => '/manage_buyer_product'], function(){
+        Route::get('buyerProductIndex','BuyerController@buyerProductIndex')->name('buyerProductIndex');
+        Route::post('buyerProductList','BuyerController@buyerProductList')->name('buyerProductList');
+        Route::get('productView','BuyerController@productView')->name('productView');
+        
+    });
 });
