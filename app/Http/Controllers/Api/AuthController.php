@@ -8,7 +8,6 @@ use App\Traits\RequestTrait;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Setting;
-use App\Models\OtpVerified;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -145,9 +144,6 @@ class AuthController extends Controller
                 if($user = $this->authenticator->attemptSignUp($credentials))
                 {
                     $update = User::where('id',$user['id'])->update(['device_token'=>$input['device_token'],'device_type'=>$input['device_type']]);
-
-                    $user['otp'] = rand(1000, 9999);
-                    OtpVerified::firstOrCreate(['user_id' => $user->id, 'country_code' => $user->country_code, 'phone_number' => $user->phone_number, 'otp' => $user->otp]);
                     return $this->loginfunction($input,$user);
                 }
                 else
@@ -366,131 +362,12 @@ class AuthController extends Controller
             $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if($user)
             {
-                $user['otp'] = rand(1000, 9999);
-                OtpVerified::firstOrCreate(['user_id' => $user->id, 'country_code' => $user->country_code, 'phone_number' => $user->phone_number, 'otp' => $user->otp]);
-                return $this->successResponse($user->toArray(),('otp sent successfully'));
+                return $this->successResponse($user->toArray(),('Your phone number match successfully'));
             }
             else
             {
                 return $this->sendBadRequest('Your phone number not found');
             }
-        } catch (NotFoundHttpException $ex) {
-            return $this->notFoundRequest($ex);
-        } catch (\Exception $ex) {
-            return $this->sendErrorResponse($ex);
-        }
-    }
-
-    /**
-     * Swagger definition for otpVerified
-     *
-     * @OA\Post(
-     *     tags={"Authentication"},
-     *     path="/otpVerified",
-     *     description="otpVerified",
-     *     summary="otpVerified",
-     *     operationId="otpVerified",
-     * @OA\Parameter(
-     *     name="Content-Language",
-     *     in="header",
-     *     description="Content-Language",
-     *     required=false,@OA\Schema(type="string")
-     *     ),
-     * @OA\RequestBody(
-     *     required=true,
-     * @OA\MediaType(
-     *     mediaType="multipart/form-data",
-     * @OA\JsonContent(
-     * @OA\Property(
-     *     property="otp",
-     *     type="string"
-     *     ),
-     * @OA\Property(
-     *     property="country_code",
-     *     type="string"
-     *     ),
-     * @OA\Property(
-     *     property="phone_number",
-     *     type="string"
-     *     ),
-     *    )
-     *   ),
-     *  ),
-     * @OA\Response(response=200,description="Response",
-     * @OA\JsonContent(@OA\Property(property="token",type="string"))
-     *     ),
-     * @OA\Response(
-     *     response="400",
-     *     description="Validation error"
-     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
-     *     ),
-     * @OA\Response(
-     *     response="401",
-     *     description="Not Authorized Invalid or missing Authorization header"
-     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
-     *     ),
-     * @OA\Response(
-     *     response="403",
-     *     description="Not Authorized Invalid or missing Authorization header"
-     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
-     *     ),
-     * @OA\Response(
-     *     response=500,
-     *     description="Unexpected error"
-     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
-     *     ),
-     * )
-     */
-
-    public function otpVerified(Request $request)
-    {
-        try {
-
-            $input = $request->all();
-
-            $requiredParams = $this->requiredRequestParams('otpVerified');
-            $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
-            }
-
-            $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
-            if($user)
-            {
-                $check_otp = OtpVerified::where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->where('status',0)->get();
-                if(!$check_otp->isEmpty())
-                {
-                    $i = 0;
-                    foreach($check_otp as $otp)
-                    {
-                        if($otp->otp == $request->otp)
-                        {
-                            $i++;
-                            $otp->status = 1;
-                            $otp->save();
-                            break;
-                        }
-                    }
-
-                    if($i)
-                    {
-                        return $this->successResponse($user->toArray(),('Otp verified successfully'));
-                    }
-                    else
-                    {
-                        return $this->sendBadRequest('The OTP entered is incorrect. Please try again');
-                    }
-                }
-                else
-                {
-                    return $this->sendBadRequest('Otp does not sent');
-                }
-            }
-            else
-            {
-                return $this->sendBadRequest('Your phone number not found');
-            }
-
         } catch (NotFoundHttpException $ex) {
             return $this->notFoundRequest($ex);
         } catch (\Exception $ex) {
@@ -789,13 +666,6 @@ class AuthController extends Controller
                 $params = [
                     'country_code' => 'required|exists:users,country_code',
                     'phone_number' => 'required|exists:users,phone_number',
-                ];
-                break;
-            case 'otpVerified':
-                $params = [
-                    'otp' => 'required|digits:4',
-                    'country_code' => 'required',
-                    'phone_number' => 'required|numeric',
                 ];
                 break;
             case 'resetPassword':
