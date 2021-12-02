@@ -7,11 +7,13 @@ use App\Traits\ResponseTrait;
 use App\Traits\UtilityTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use App\Models\Buyer;
+use App\Models\BuyerProducts;
 use Datatables;
 
-class BuyerController extends Controller
+class BuyerProductController extends Controller
 {
+    use ResponseTrait, UtilityTrait;
+
     public function buyerProductIndex()
     {
         return view('admin.buyerProduct.index');
@@ -21,8 +23,8 @@ class BuyerController extends Controller
     {
         try {
             
-            $data = Buyer::select('users.id','users.fullname','buyers.*')
-            ->leftJoin('users','buyers.user_id','users.id')
+            $data = BuyerProducts::select('users.id','users.fullname','buyer_products.*')
+            ->leftJoin('users','buyer_products.user_id','users.id')
             ->get();
 
             return Datatables::of($data)
@@ -47,9 +49,12 @@ class BuyerController extends Controller
                     }
                     return '-';
                 })
+                ->addColumn('approve_and_disapprove_button', function($row){
+                    return '<a href="javascript:void(0)" class="approve btn btn-success btn-sm" data-id="'. $row->id .'"><span class="fas fa-thumbs-up"></span></a> <a href="javascript:void(0)" class="disapprove btn btn-danger btn-sm" data-id="'. $row->id .'"><span class="fas fa-thumbs-down"></span></a>';
+                })
                 ->addColumn('product_view', function($row){
      
-                    $btn = '<a href="javascript:void(0)" id="view" class="view btn btn-success btn-sm" data-id="'. $row->id .'"><span class="fa fa-eye"></span></a>';
+                    $btn = '<a href="javascript:void(0)" class="view btn btn-success btn-sm" data-id="'. $row->id .'"><span class="fa fa-eye"></span></a>';
                     return $btn;
                 })
                 ->filter(function ($instance) use ($request) {
@@ -68,7 +73,7 @@ class BuyerController extends Controller
                         });
                     }
                 })
-                ->rawColumns(['buyer_product_images','product_view'])
+                ->rawColumns(['buyer_product_images','product_view','approve_and_disapprove_button'])
                 ->make(true);
         } catch (\Exception $ex) {
             return $this->sendErrorResponse($ex);
@@ -78,19 +83,47 @@ class BuyerController extends Controller
     public function productView(Request $request)
     {
         $id = $request->id;
-        $data = Buyer::find($id);
+        $data = BuyerProducts::find($id);
         $image_data = array();
-        // $image = "";
         if($data->buyer_product_images)
         {
             foreach(explode(',',$data->buyer_product_images) as $image_name)
             {
                 $image = asset("public/upload/buyer_product_images/".$image_name);
-                // break;
                 array_push($image_data,$image);
             }
         }
         $data['buyer_product_images'] = $image_data;
         return response()->json($data);
+    }
+
+    public function productApprove(Request $request)
+    {
+        $data = BuyerProducts::find($request->id);
+        if($data)
+        {
+            $data->product_status = 1;
+            $data->save();
+            return response()->json($data);
+        }
+        else
+        {
+            return response()->json($data);
+        }
+    }
+
+    public function productDisapprove(Request $request)
+    {
+        $data = BuyerProducts::find($request->id);
+        if($data)
+        {
+            $data->product_status = 2;
+            $data->save();
+            return response()->json($data);
+        }
+        else
+        {
+            return response()->json($data);
+        }
     }
 }

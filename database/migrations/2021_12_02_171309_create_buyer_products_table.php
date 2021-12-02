@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOtpVerifiedsTable extends Migration
+class CreateBuyerProductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateOtpVerifiedsTable extends Migration
      */
     public function up()
     {
-        Schema::create('otp_verifieds', function (Blueprint $table) {
+        Schema::create('buyer_products', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->default(0);
-            $table->string('country_code')->nullable();
-            $table->string('phone_number')->nullable();
-            $table->integer('otp')->default(0);
-            $table->integer('status')->comment('0 : pending, 1 : verified, 2 : expired')->default(0);
+            $table->string('buyer_product_name')->nullable();
+            $table->text('buyer_product_images')->nullable();
+            $table->text('buyer_product_description')->nullable();
+            $table->integer('product_status')->comment('0 : processing/pendding, 1 : approve, 2 : approved')->default(0);
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ class CreateOtpVerifiedsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('otp_verifieds');
+        Schema::dropIfExists('buyer_products');
     }
 }

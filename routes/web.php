@@ -46,9 +46,10 @@ Route::group(['middleware' => 'adminAuth'], function ()
     });
 
     Route::group(['prefix' => '/manage_buyer_product'], function(){
-        Route::get('buyerProductIndex','BuyerController@buyerProductIndex')->name('buyerProductIndex');
-        Route::post('buyerProductList','BuyerController@buyerProductList')->name('buyerProductList');
-        Route::get('productView','BuyerController@productView')->name('productView');
-        
+        Route::get('buyerProductIndex','BuyerProductController@buyerProductIndex')->name('buyerProductIndex');
+        Route::post('buyerProductList','BuyerProductController@buyerProductList')->name('buyerProductList');
+        Route::get('productView','BuyerProductController@productView')->name('productView');
+        Route::post('productApprove','BuyerProductController@productApprove')->name('productApprove');
+        Route::post('productDisapprove','BuyerProductController@productDisapprove')->name('productDisapprove');
     });
 });

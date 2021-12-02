@@ -41,7 +41,7 @@ Route::namespace('Api')->group(
                 Route::post('userProfileUpdate','UserController@userProfileUpdate');
 
                 //buyer post product
-                Route::post('buyerPostProduct','BuyerController@buyerPostProduct');
+                Route::post('buyerPostProduct','BuyerProductController@buyerPostProduct');
             }
         );
     }

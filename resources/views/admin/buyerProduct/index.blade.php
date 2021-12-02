@@ -34,6 +34,7 @@
                             <th>Product Image</th>
                             <th>Created Date</th>
                             <th>Product View</th>
+                            <th>Approve/Disapprove</th>
                         </tr>
                     </thead>
                 </table>
@@ -125,9 +126,11 @@
                 {
                     data: 'product_view',
                     name: 'product_view',
-                    orderable: false,
-                    searchable: false
                 },
+                {
+                    data: 'approve_and_disapprove_button',
+                    name: 'approve_and_disapprove_button'
+                }
             ]
         });
 
@@ -156,7 +159,7 @@
                 $('#buyer_product_images').empty();
                 var html = '<div style="text-align: center;" class="owl-carousel owl-theme slider">';
                 $.each(data.buyer_product_images, function (key, val) {
-                    html += '<img src="'+ val +'" class="img-thumbnail w-100">'
+                    html += '<img src="'+ val +'" class="img-thumbnail w-100" style="height: 600px">'
                 });
                 html += '</div>';
                 $('#buyer_product_images').append(html);
@@ -169,6 +172,80 @@
                 });
                 $('#viewModal').modal("show");
             }
+        });
+    });
+
+    $(document).on('click', '.approve', function () {
+        var id = $(this).attr('data-id');
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure you want to approve this record",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#21bc6c",
+            confirmButtonText: "Yes, approve it!",
+            closeOnConfirm: false
+        }, function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: "{{route('productApprove')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    swal({
+                        title: "Deleted!",
+                        text: "Product has been approved.",
+                        type: "success"
+                    }, function () {
+                        $('#datatable_buyer_product').DataTable().draw(true);
+                    });
+                }
+            });
+        });
+    });
+
+    $(document).on('click', '.disapprove', function () {
+        var id = $(this).attr('data-id');
+        swal({
+            title: "Are you sure?",
+            text: "Are you sure you want to disapprove this record",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, disapprove it!",
+            closeOnConfirm: false
+        }, function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: "{{route('productDisapprove')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    swal({
+                        title: "Deleted!",
+                        text: "Product has been disapproved.",
+                        type: "success"
+                    }, function () {
+                        $('#datatable_buyer_product').DataTable().draw(true);
+                    });
+                }
+            });
         });
     });
 

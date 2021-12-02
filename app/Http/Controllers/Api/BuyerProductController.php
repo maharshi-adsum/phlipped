@@ -7,10 +7,10 @@ use App\Traits\ResponseTrait;
 use App\Traits\UtilityTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Buyer;
+use App\Models\BuyerProducts;
 use Auth;
 
-class BuyerController extends Controller
+class BuyerProductController extends Controller
 {
     use ResponseTrait, UtilityTrait;
 
@@ -18,7 +18,7 @@ class BuyerController extends Controller
      * Swagger defination buyer post product
      *
      * @OA\Post(
-     *     tags={"Buyer"},
+     *     tags={"Buyer Product"},
      *     path="/buyerPostProduct",
      *     description="buyer post product",
      *     summary="buyer post product",
@@ -112,7 +112,7 @@ class BuyerController extends Controller
                 $data['buyer_product_images'] = implode(',', $dataImage);
             }
 
-            $buyerProductCreate = Buyer::firstOrCreate($data);
+            $buyerProductCreate = BuyerProducts::firstOrCreate($data);
             if($buyerProductCreate)
             {
                 return response()->json(['status' => "true",'data' => $buyerProductCreate->toArray(), 'messages' => array('Buyer product successfully saved')]);

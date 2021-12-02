@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class OtpVerified extends Model
+class BuyerProducts extends Model
 {
     protected $fillable = [
-        'user_id', 'country_code', 'phone_number', 'otp', 'status',
+        'user_id', 'buyer_product_name', 'buyer_product_images', 'buyer_product_description', 'product_status',
     ];
 
-    protected $table="otp_verifieds";
+    protected $table="buyer_products";
 
  	/**
      * The attributes that should be hidden for arrays.
