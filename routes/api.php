@@ -40,11 +40,13 @@ Route::namespace('Api')->group(
                 Route::post('userProfileGet','UserController@userProfileGet');
                 Route::post('userProfileUpdate','UserController@userProfileUpdate');
 
-                //buyer post product
+                //buyer product
                 Route::post('buyerPostProduct','BuyerProductController@buyerPostProduct');
-
-                //buyer get product
                 Route::post('buyerGetProduct','BuyerProductController@buyerGetProduct');
+
+                //got one product
+                Route::post('gotOneAllProduct','CommonController@gotOneAllProduct');
+                Route::post('gotOneSingleProduct','CommonController@gotOneSingleProduct');
             }
         );
     }
