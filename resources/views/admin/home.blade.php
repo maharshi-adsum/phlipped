@@ -21,6 +21,18 @@
                             </div>
                         </a>
                     </div>
+                    <div class="col-lg-3 col-xs-6">
+                        <a href="{{route('buyerProductIndex')}}" style="color: black">
+                            <div class="info-box">
+                                <span class="info-box-icon" style="background-color: #0091D6;"><i
+                                        class="fa fa-users"></i></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Buyer Product Listing</span>
+                                    <span class="info-box-number">{{$buyer_product_count}}</span>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -120,6 +120,10 @@
             float: right;
         }
 
+        .table-width .table.dataTable{
+            width: 100% !important;
+        }
+
     </style>
 </head>
 

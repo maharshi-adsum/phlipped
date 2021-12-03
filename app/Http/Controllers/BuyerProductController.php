@@ -16,15 +16,19 @@ class BuyerProductController extends Controller
 
     public function buyerProductIndex()
     {
-        return view('admin.buyerProduct.index');
+        $product_all_count = BuyerProducts::count();
+        $pending_count = BuyerProducts::where('product_status',0)->count();
+        $approved_count = BuyerProducts::where('product_status',1)->count();
+        $disapproved_count = BuyerProducts::where('product_status',2)->count();
+        return view('admin.buyerProduct.index',compact('product_all_count','pending_count','approved_count','disapproved_count'));
     }
 
-    public function buyerProductList(Request $request)
+    public function buyerProductPendingList(Request $request)
     {
         try {
-            
             $data = BuyerProducts::select('users.id','users.fullname','buyer_products.*')
             ->leftJoin('users','buyer_products.user_id','users.id')
+            ->where('product_status',$request->status)
             ->get();
 
             return Datatables::of($data)
@@ -49,8 +53,19 @@ class BuyerProductController extends Controller
                     }
                     return '-';
                 })
-                ->addColumn('approve_and_disapprove_button', function($row){
-                    return '<a href="javascript:void(0)" class="approve btn btn-success btn-sm" data-id="'. $row->id .'"><span class="fas fa-thumbs-up"></span></a> <a href="javascript:void(0)" class="disapprove btn btn-danger btn-sm" data-id="'. $row->id .'"><span class="fas fa-thumbs-down"></span></a>';
+                ->addColumn('approve_and_disapprove_button', function($row) use($request){
+                    if($request->status == 0)
+                    {
+                        return '<a href="javascript:void(0)" class="approve btn btn-success btn-sm" data-id="'. $row->id .'"><span class="fas fa-thumbs-up"></span></a> <a href="javascript:void(0)" class="disapprove btn btn-danger btn-sm" data-id="'. $row->id .'"><span class="fas fa-thumbs-down"></span></a>';
+                    }
+                    else if($request->status == 1)
+                    {
+                        return '<a href="javascript:void(0)" class="btn btn-success btn-sm"><span class="fas fa-thumbs-up"></span></a>';
+                    }
+                    else if($request->status == 2)
+                    {
+                        return '<a href="javascript:void(0)" class="btn btn-danger btn-sm"><span class="fas fa-thumbs-down"></span></a>';
+                    }
                 })
                 ->addColumn('product_view', function($row){
      
@@ -104,12 +119,13 @@ class BuyerProductController extends Controller
         {
             $data->product_status = 1;
             $data->save();
-            return response()->json($data);
         }
-        else
-        {
-            return response()->json($data);
-        }
+
+        $pending_count = BuyerProducts::where('product_status',0)->count();
+        $approved_count = BuyerProducts::where('product_status',1)->count();
+        $disapproved_count = BuyerProducts::where('product_status',2)->count();
+        $data = ['pending_count' => $pending_count, 'approved_count' => $approved_count,'disapproved_count' => $disapproved_count];
+        return response()->json($data);
     }
 
     public function productDisapprove(Request $request)
@@ -119,11 +135,12 @@ class BuyerProductController extends Controller
         {
             $data->product_status = 2;
             $data->save();
-            return response()->json($data);
         }
-        else
-        {
-            return response()->json($data);
-        }
+        
+        $pending_count = BuyerProducts::where('product_status',0)->count();
+        $approved_count = BuyerProducts::where('product_status',1)->count();
+        $disapproved_count = BuyerProducts::where('product_status',2)->count();
+        $data = ['pending_count' => $pending_count, 'approved_count' => $approved_count,'disapproved_count' => $disapproved_count];
+        return response()->json($data);
     }
 }

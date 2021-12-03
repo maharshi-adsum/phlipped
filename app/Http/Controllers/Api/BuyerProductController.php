@@ -128,19 +128,121 @@ class BuyerProductController extends Controller
             return $this->sendErrorResponse($e);
         }
     }
+
+    /**
+     * Swagger defination buyer get product
+     *
+     * @OA\Post(
+     *     tags={"Buyer Product"},
+     *     path="/buyerGetProduct",
+     *     description="buyer get product",
+     *     summary="buyer get product",
+     *     operationId="buyerGetProduct",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+
+    public function buyerGetProduct(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            $requiredParams = $this->requiredRequestParams('buyer_get_product');
+            $validator = Validator::make($input, $requiredParams);
+            if ($validator->fails()) 
+            {
+                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+            }
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+            if(!$buyerProductGet->isEmpty())
+            {
+                $product_array = array();
+                foreach($buyerProductGet as $data)
+                {
+                    $product_data['product_id'] = $data['id'];
+                    $product_data['buyer_product_name'] = $data['buyer_product_name'];
+                    $product_data['buyer_product_description'] = $data['buyer_product_description'];
+                    $product_data['product_status'] = $data['product_status'];
+                    $image_array_store = array();
+                    foreach(explode(',',$data->buyer_product_images) as $image_name)
+                    {
+                        array_push($image_array_store, asset("public/upload/buyer_product_images/".$image_name));
+                    }
+                    $product_data['buyer_product_images'] = $image_array_store;
+                    array_push($product_array, $product_data);
+                }
+                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Buyer product list found')]);
+            }
+            else
+            {
+                return $this->sendBadRequest('Something went wrong!');
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
     
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {
             case 'buyer_post_product':
                 $params = [
-                    'user_id' => 'required',
+                    'user_id' => 'required|exists:users,id',
                     'buyer_product_name' => 'required',
                     'buyer_product_images' => 'required',
                     'buyer_product_description' => 'required',
                 ];
                 break;
-            case 'user_profile_get':
+            case 'buyer_get_product':
                 $params = [
                     'user_id' => 'required|exists:users,id',
                 ];

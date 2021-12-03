@@ -47,9 +47,9 @@ Route::group(['middleware' => 'adminAuth'], function ()
 
     Route::group(['prefix' => '/manage_buyer_product'], function(){
         Route::get('buyerProductIndex','BuyerProductController@buyerProductIndex')->name('buyerProductIndex');
-        Route::post('buyerProductList','BuyerProductController@buyerProductList')->name('buyerProductList');
         Route::get('productView','BuyerProductController@productView')->name('productView');
         Route::post('productApprove','BuyerProductController@productApprove')->name('productApprove');
         Route::post('productDisapprove','BuyerProductController@productDisapprove')->name('productDisapprove');
+        Route::post('buyerProductPendingList','BuyerProductController@buyerProductPendingList')->name('buyerProductPendingList');
     });
 });

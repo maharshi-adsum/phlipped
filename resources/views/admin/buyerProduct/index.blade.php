@@ -7,7 +7,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Buyer Product List (<span id="user_count">0</span>)</h3>
+                <h3 class="card-title">Buyer Product Count (<span id="user_count">{{$product_all_count}}</span>)</h3>
             </div>
             <div class="card-header mb-2">
                 <div class="row">
@@ -18,26 +18,77 @@
                         <input type="text" name="buyer_product_search" id="search"
                             class="form-control buyer_product_search" placeholder="Search.." autocomplete="off">
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-1">
                         <a type="button" class="btn refresh-btn mt-2 mt-md-0" style="font-size: 14px" id="reset"><i
                                 class="fa fa-refresh" aria-hidden="true"></i></a>
                     </div>
+                    <div class="col-md-5">
+                        <ul class="nav nav-tabs" id="myTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link active" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending (<span id="pending_count">{{$pending_count}}</span>)</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="approved-tab" data-toggle="tab" href="#approved" role="tab" aria-controls="approved" aria-selected="false">Approved (<span id="approved_count">{{$approved_count}}</span>)</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a class="nav-link" id="disapproved-tab" data-toggle="tab" href="#disapproved" role="tab" aria-controls="disapproved" aria-selected="false">Disapproved (<span id="disapproved_count">{{$disapproved_count}}</span>)</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-            <div class="card-body table-responsive">
-                <table class="table" id="datatable_buyer_product">
-                    <thead class="thead-inverse">
-                        <tr>
-                            <th>Sr. No</th>
-                            <th>Buyer Name</th>
-                            <th>Product Name</th>
-                            <th>Product Image</th>
-                            <th>Created Date</th>
-                            <th>Product View</th>
-                            <th>Approve/Disapprove</th>
-                        </tr>
-                    </thead>
-                </table>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="pending" role="tabpanel" aria-labelledby="pending-tab">
+                    <div class="card-body table-width table-responsive">
+                        <table class="table" id="datatable_buyer_product_pending">
+                            <thead>
+                                <tr>
+                                    <th>Sr. No</th>
+                                    <th>Buyer Name</th>
+                                    <th>Product Name</th>
+                                    <th>Product Image</th>
+                                    <th>Created Date</th>
+                                    <th>Product View</th>
+                                    <th>Approve/Disapprove</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="approved" role="tabpanel" aria-labelledby="approved-tab">
+                    <div class="card-body table-width table-responsive">
+                        <table class="table" id="datatable_buyer_product_approved">
+                            <thead>
+                                <tr>
+                                    <th>Sr. No</th>
+                                    <th>Buyer Name</th>
+                                    <th>Product Name</th>
+                                    <th>Product Image</th>
+                                    <th>Created Date</th>
+                                    <th>Product View</th>
+                                    <th>Approve</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="disapproved" role="tabpanel" aria-labelledby="disapproved-tab">
+                    <div class="card-body table-width table-responsive">
+                        <table class="table" id="datatable_buyer_product_disapproved">
+                            <thead>
+                                <tr>
+                                    <th>Sr. No</th>
+                                    <th>Buyer Name</th>
+                                    <th>Product Name</th>
+                                    <th>Product Image</th>
+                                    <th>Created Date</th>
+                                    <th>Product View</th>
+                                    <th>Disapprove</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -82,8 +133,9 @@
     });
 </script>
 <script type="text/javascript">
+
     $(function () {
-        var table = $('#datatable_buyer_product').DataTable({
+        var table = $('#datatable_buyer_product_pending').DataTable({
             processing: true,
             serverSide: true,
             destroy: true,
@@ -96,11 +148,12 @@
             },
             contentType: 'application/json; charset=utf-8',
             ajax: {
-                url: "{{route('buyerProductList')}}",
+                url: "{{route('buyerProductPendingList')}}",
                 type: "POST",
                 data: function (d) {
                     d.buyer_product_search = $('.buyer_product_search').val(),
-                        d._token = '{{csrf_token()}}'
+                        d._token = '{{csrf_token()}}',
+                        d.status = 0
                 }
             },
             columns: [{
@@ -133,15 +186,127 @@
                 }
             ]
         });
+    });
 
-        $("#search").keyup(function () {
-            $('#datatable_buyer_product').DataTable().draw(true);
+    $(function () {
+        var table = $('#datatable_buyer_product_approved').DataTable({
+            processing: true,
+            serverSide: true,
+            destroy: true,
+            searching: false,
+            "aaSorting": [
+                [0, "desc"]
+            ],
+            "language": {
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#f1c63a;"></i><span class="sr-only"></span> ',
+            },
+            contentType: 'application/json; charset=utf-8',
+            ajax: {
+                url: "{{route('buyerProductPendingList')}}",
+                type: "POST",
+                data: function (d) {
+                    d.buyer_product_search = $('.buyer_product_search').val(),
+                        d._token = '{{csrf_token()}}',
+                        d.status = 1
+                }
+            },
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'fullname',
+                    name: 'fullname'
+                },
+                {
+                    data: 'buyer_product_name',
+                    name: 'buyer_product_name'
+                },
+                {
+                    data: 'buyer_product_images',
+                    name: 'buyer_product_images'
+                },
+                {
+                    data: 'buyer_product_created_at',
+                    name: 'buyer_product_created_at'
+                },
+                {
+                    data: 'product_view',
+                    name: 'product_view',
+                },
+                {
+                    data: 'approve_and_disapprove_button',
+                    name: 'approve_and_disapprove_button'
+                }
+            ]
         });
+    });
+
+    $(function () {
+        var table = $('#datatable_buyer_product_disapproved').DataTable({
+            processing: true,
+            serverSide: true,
+            destroy: true,
+            searching: false,
+            "aaSorting": [
+                [0, "desc"]
+            ],
+            "language": {
+                processing: '<i class="fa fa-spinner fa-spin fa-3x fa-fw" style="color:#f1c63a;"></i><span class="sr-only"></span> ',
+            },
+            contentType: 'application/json; charset=utf-8',
+            ajax: {
+                url: "{{route('buyerProductPendingList')}}",
+                type: "POST",
+                data: function (d) {
+                    d.buyer_product_search = $('.buyer_product_search').val(),
+                        d._token = '{{csrf_token()}}',
+                        d.status = 2
+                }
+            },
+            columns: [{
+                    data: 'id',
+                    name: 'id'
+                },
+                {
+                    data: 'fullname',
+                    name: 'fullname'
+                },
+                {
+                    data: 'buyer_product_name',
+                    name: 'buyer_product_name'
+                },
+                {
+                    data: 'buyer_product_images',
+                    name: 'buyer_product_images'
+                },
+                {
+                    data: 'buyer_product_created_at',
+                    name: 'buyer_product_created_at'
+                },
+                {
+                    data: 'product_view',
+                    name: 'product_view',
+                },
+                {
+                    data: 'approve_and_disapprove_button',
+                    name: 'approve_and_disapprove_button'
+                }
+            ]
+        });
+    });
+
+    $("#search").keyup(function () {
+        $('#datatable_buyer_product_pending').DataTable().draw(true);
+        $('#datatable_buyer_product_approved').DataTable().draw(true);
+        $('#datatable_buyer_product_disapproved').DataTable().draw(true);
     });
 
     $('#reset').on('click', function () {
         $('#search').val('');
-        $('#datatable_buyer_product').DataTable().draw(true);
+        $('#datatable_buyer_product_pending').DataTable().draw(true);
+        $('#datatable_buyer_product_approved').DataTable().draw(true);
+        $('#datatable_buyer_product_disapproved').DataTable().draw(true);
     });
 
     $(document).on("click", ".view", function () {
@@ -205,7 +370,7 @@
                         text: "Product has been approved.",
                         type: "success"
                     }, function () {
-                        $('#datatable_buyer_product').DataTable().draw(true);
+                        count(data);
                     });
                 }
             });
@@ -242,12 +407,22 @@
                         text: "Product has been disapproved.",
                         type: "success"
                     }, function () {
-                        $('#datatable_buyer_product').DataTable().draw(true);
+                        count(data);
                     });
                 }
             });
         });
     });
+
+    function count(data)
+    {
+        document.getElementById("pending_count").innerHTML = data.pending_count;
+        document.getElementById("approved_count").innerHTML = data.approved_count;
+        document.getElementById("disapproved_count").innerHTML = data.disapproved_count;
+        $('#datatable_buyer_product_pending').DataTable().draw(true);
+        $('#datatable_buyer_product_approved').DataTable().draw(true);
+        $('#datatable_buyer_product_disapproved').DataTable().draw(true);
+    }
 
 </script>
 @endsection

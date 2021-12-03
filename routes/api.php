@@ -42,6 +42,9 @@ Route::namespace('Api')->group(
 
                 //buyer post product
                 Route::post('buyerPostProduct','BuyerProductController@buyerPostProduct');
+
+                //buyer get product
+                Route::post('buyerGetProduct','BuyerProductController@buyerGetProduct');
             }
         );
     }
