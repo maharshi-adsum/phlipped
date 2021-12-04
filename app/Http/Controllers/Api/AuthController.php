@@ -366,7 +366,7 @@ class AuthController extends Controller
             }
             else
             {
-                return $this->sendBadRequest('Your phone number not found');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Your phone number not found')]);
             }
         } catch (NotFoundHttpException $ex) {
             return $this->notFoundRequest($ex);
@@ -455,7 +455,7 @@ class AuthController extends Controller
             $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {
-                return $this->sendBadRequest('User does not exist');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('User does not exist')]);
             }
 
             $user->password = Hash::make($input['password']);
@@ -554,7 +554,7 @@ class AuthController extends Controller
             $user = User::select('id','fullname','email','country_code','phone_number','password')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {
-                return $this->sendBadRequest('User does not exist');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('User does not exist')]);
             }
 
             if(Hash::check($input['old_password'], $user->password))
@@ -568,12 +568,12 @@ class AuthController extends Controller
                 }
                 else
                 {
-                    return $this->sendBadRequest('The password confirmation does not match.');
+                    return response()->json(['status' => "false",'data' => "", 'messages' => array('The password confirmation does not match')]);
                 }
             }
             else
             {
-                return $this->sendBadRequest('The old password does not match.');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('The old password does not match')]);
             }
 
         } catch (NotFoundHttpException $ex) {

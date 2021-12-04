@@ -80,7 +80,7 @@ class UserController extends Controller
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return $this->sendBadRequest('Unauthorized access');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
             $user = User::select('id','fullname','email','country_code','phone_number','user_image')->where('id',$input['user_id'])->where('is_active',1)->first();
@@ -90,7 +90,7 @@ class UserController extends Controller
             }
             else
             {
-                return $this->sendBadRequest('User does not exist');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('User does not exist')]);
             }
 
         } catch (Exception $e) {
@@ -187,7 +187,7 @@ class UserController extends Controller
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return $this->sendBadRequest('Unauthorized access');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
             $requiredParams = $this->requiredRequestParams('user_profile_update',$input['user_id']);

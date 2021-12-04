@@ -93,7 +93,7 @@ class BuyerProductController extends Controller
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return $this->sendBadRequest('Unauthorized access');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
             $data['user_id'] = $input['user_id'];
@@ -119,7 +119,7 @@ class BuyerProductController extends Controller
             }
             else
             {
-                return $this->sendBadRequest('Something went wrong!');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
             }
 
         } catch (Exception $e) {
@@ -196,7 +196,7 @@ class BuyerProductController extends Controller
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return $this->sendBadRequest('Unauthorized access');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
             $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
@@ -221,7 +221,7 @@ class BuyerProductController extends Controller
             }
             else
             {
-                return $this->sendBadRequest('Something went wrong!');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
             }
 
         } catch (Exception $e) {
