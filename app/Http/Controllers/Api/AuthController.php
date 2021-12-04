@@ -148,12 +148,12 @@ class AuthController extends Controller
                 }
                 else
                 {
-                    return $this->sendUnauthorised('These credentials do not match our records.');
+                    return response()->json(['status' => "false",'data' => "", 'messages' => array('These credentials do not match our records.')]);
                 }
             }
             else
             {
-                return $this->sendUnauthorised('Something went wrong. Please try again.');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong. Please try again.')]);
             }
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
@@ -256,7 +256,7 @@ class AuthController extends Controller
             }
             else
             {
-                return $this->sendUnauthorised('These credentials do not match our records.');
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('These credentials do not match our records.')]);
             }
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
