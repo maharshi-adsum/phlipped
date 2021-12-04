@@ -238,6 +238,20 @@
                             </a>
                         </li>
 
+                        @if(Request::is('manage_seller_product/sellerProductIndex'))
+                        @php($class="menu-open")
+                        @php($active="active1")
+                        @else
+                        @php($class="")
+                        @php($active="")
+                        @endif
+                        <li class="nav-item">
+                            <a href="{{route('sellerProductIndex')}}" class="nav-link active-hover {{$active}}">
+                                <i class="fa fa-users nav-icon"></i>
+                                <p>Manage Seller Product</p>
+                            </a>
+                        </li>
+
                         @if(Request::is('manage_setting/setting'))
                         @php($class="menu-open")
                         @php($active="active1")

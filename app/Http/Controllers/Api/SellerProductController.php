@@ -7,22 +7,23 @@ use App\Traits\ResponseTrait;
 use App\Traits\UtilityTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\SellerProducts;
 use App\Models\BuyerProducts;
 use Auth;
 
-class BuyerProductController extends Controller
+class SellerProductController extends Controller
 {
     use ResponseTrait, UtilityTrait;
 
     /**
-     * Swagger defination buyer post product
+     * Swagger defination seller post product
      *
      * @OA\Post(
-     *     tags={"Buyer Product"},
-     *     path="/buyerPostProduct",
-     *     description="buyer post product",
-     *     summary="buyer post product",
-     *     operationId="buyerPostProduct",
+     *     tags={"Seller Product"},
+     *     path="/sellerPostProduct",
+     *     description="seller post product",
+     *     summary="seller post product",
+     *     operationId="sellerPostProduct",
      * @OA\Parameter(
      *     name="Content-Language",
      *     in="header",
@@ -39,15 +40,39 @@ class BuyerProductController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="buyer_product_name",
+     *     property="buyer_product_id",
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="buyer_product_images[]",
+     *     property="seller_product_name",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_images[]",
      *     type="file"
      *     ),
      * @OA\Property(
-     *     property="buyer_product_description",
+     *     property="seller_product_description",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_price",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_condition",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_latitude",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_longitude",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_shipping_charges",
      *     type="string"
      *     ),
      *    )
@@ -79,12 +104,12 @@ class BuyerProductController extends Controller
      * )
      */
 
-    public function buyerPostProduct(Request $request)
+    public function sellerPostProduct(Request $request)
     {
         try{
             $input = $request->all();
 
-            $requiredParams = $this->requiredRequestParams('buyer_post_product');
+            $requiredParams = $this->requiredRequestParams('seller_post_product');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
@@ -96,26 +121,38 @@ class BuyerProductController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $data['user_id'] = $input['user_id'];
-            $data['buyer_product_name'] = $input['buyer_product_name'];
-            $data['buyer_product_description'] = $input['buyer_product_description'];
-
-            if($request->hasfile('buyer_product_images'))
+            $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->first();
+            if(!$checkProduct)
             {
-                foreach($request->file('buyer_product_images') as $file)
-                {
-                    $image_name = $file->getClientOriginalName();
-                    $image_name = 'buyer_product_images_' . rand(111111,999999) . '_' . time(). '.' . $file->getClientOriginalExtension();
-                    $file->move(public_path('upload/buyer_product_images'), $image_name);
-                    $dataImage[] = $image_name;
-                }
-                $data['buyer_product_images'] = implode(',', $dataImage);
+                return $this->sendBadRequest('Something went wrong!');
             }
 
-            $buyerProductCreate = BuyerProducts::firstOrCreate($data);
-            if($buyerProductCreate)
+            $data['user_id'] = $input['user_id'];
+            $data['buyer_product_id'] = $input['buyer_product_id'];
+            $data['seller_product_name'] = $input['seller_product_name'];
+            $data['seller_product_description'] = $input['seller_product_description'];
+            $data['seller_product_price'] = $input['seller_product_price'];
+            $data['seller_product_condition'] = $input['seller_product_condition'];
+            $data['seller_product_latitude'] = $input['seller_product_latitude'];
+            $data['seller_product_longitude'] = $input['seller_product_longitude'];
+            $data['seller_product_shipping_charges'] = $input['seller_product_shipping_charges'];
+
+            if($request->hasfile('seller_product_images'))
             {
-                return response()->json(['status' => "true",'data' => $buyerProductCreate->toArray(), 'messages' => array('Buyer product successfully saved')]);
+                foreach($request->file('seller_product_images') as $file)
+                {
+                    $image_name = $file->getClientOriginalName();
+                    $image_name = 'seller_product_images_' . rand(111111,999999) . '_' . time(). '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('upload/seller_product_images'), $image_name);
+                    $dataImage[] = $image_name;
+                }
+                $data['seller_product_images'] = implode(',', $dataImage);
+            }
+
+            $sellerProductCreate = SellerProducts::firstOrCreate($data);
+            if($sellerProductCreate)
+            {
+                return response()->json(['status' => "true",'data' => $sellerProductCreate->toArray(), 'messages' => array('Seller product successfully saved')]);
             }
             else
             {
@@ -130,14 +167,14 @@ class BuyerProductController extends Controller
     }
 
     /**
-     * Swagger defination buyer get product
+     * Swagger defination seller get product
      *
      * @OA\Post(
-     *     tags={"Buyer Product"},
-     *     path="/buyerGetProduct",
-     *     description="buyer get product",
-     *     summary="buyer get product",
-     *     operationId="buyerGetProduct",
+     *     tags={"Seller Product"},
+     *     path="/sellerGetProduct",
+     *     description="seller get product",
+     *     summary="seller get product",
+     *     operationId="sellerGetProduct",
      * @OA\Parameter(
      *     name="Content-Language",
      *     in="header",
@@ -182,12 +219,12 @@ class BuyerProductController extends Controller
      * )
      */
 
-    public function buyerGetProduct(Request $request)
+    public function sellerGetProduct(Request $request)
     {
         try{
             $input = $request->all();
 
-            $requiredParams = $this->requiredRequestParams('buyer_get_product');
+            $requiredParams = $this->requiredRequestParams('seller_get_product');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
@@ -199,25 +236,30 @@ class BuyerProductController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
-            if(!$buyerProductGet->isEmpty())
+            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+            if(!$sellerProductGet->isEmpty())
             {
                 $product_array = array();
-                foreach($buyerProductGet as $data)
+                foreach($sellerProductGet as $data)
                 {
-                    $product_data['buyer_product_id'] = $data['id'];
-                    $product_data['buyer_product_name'] = $data['buyer_product_name'];
-                    $product_data['buyer_product_description'] = $data['buyer_product_description'];
-                    $product_data['buyer_product_status'] = $data['buyer_product_status'];
+                    $product_data['user_id'] = $data['user_id'];
+                    $product_data['buyer_product_id'] = $data['buyer_product_id'];
+                    $product_data['seller_product_name'] = $data['seller_product_name'];
+                    $product_data['seller_product_description'] = $data['seller_product_description'];
+                    $product_data['seller_product_price'] = $data['seller_product_price'];
+                    $product_data['seller_product_condition'] = $data['seller_product_condition'];
+                    $product_data['seller_product_latitude'] = $data['seller_product_latitude'];
+                    $product_data['seller_product_longitude'] = $data['seller_product_longitude'];
+                    $product_data['seller_product_shipping_charges'] = $data['seller_product_shipping_charges'];
                     $image_array_store = array();
-                    foreach(explode(',',$data->buyer_product_images) as $image_name)
+                    foreach(explode(',',$data->seller_product_images) as $image_name)
                     {
-                        array_push($image_array_store, asset("public/upload/buyer_product_images/".$image_name));
+                        array_push($image_array_store, asset("public/upload/seller_product_images/".$image_name));
                     }
-                    $product_data['buyer_product_images'] = $image_array_store;
+                    $product_data['seller_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);
                 }
-                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Buyer product list found')]);
+                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Seller product list found')]);
             }
             else
             {
@@ -234,15 +276,21 @@ class BuyerProductController extends Controller
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {
-            case 'buyer_post_product':
+            case 'seller_post_product':
                 $params = [
                     'user_id' => 'required|exists:users,id',
-                    'buyer_product_name' => 'required',
-                    'buyer_product_images' => 'required',
-                    'buyer_product_description' => 'required',
+                    'buyer_product_id' => 'required|exists:buyer_products,id',
+                    'seller_product_name' => 'required',
+                    'seller_product_images' => 'required',
+                    'seller_product_description' => 'required',
+                    'seller_product_price' => 'required',
+                    'seller_product_condition' => 'required',
+                    'seller_product_latitude' => 'required',
+                    'seller_product_longitude' => 'required',
+                    'seller_product_shipping_charges' => 'required',
                 ];
                 break;
-            case 'buyer_get_product':
+            case 'seller_get_product':
                 $params = [
                     'user_id' => 'required|exists:users,id',
                 ];

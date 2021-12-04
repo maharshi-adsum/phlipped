@@ -8,27 +8,28 @@ use App\Traits\UtilityTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\BuyerProducts;
+use App\Models\SellerProducts;
 use Datatables;
 
-class BuyerProductController extends Controller
+class SellerProductController extends Controller
 {
     use ResponseTrait, UtilityTrait;
 
-    public function buyerProductIndex()
+    public function sellerProductIndex()
     {
-        $product_all_count = BuyerProducts::count();
-        $pending_count = BuyerProducts::where('buyer_product_status',0)->count();
-        $approved_count = BuyerProducts::where('buyer_product_status',1)->count();
-        $disapproved_count = BuyerProducts::where('buyer_product_status',2)->count();
-        return view('admin.buyerProduct.index',compact('product_all_count','pending_count','approved_count','disapproved_count'));
+        $product_all_count = SellerProducts::count();
+        $pending_count = SellerProducts::where('seller_product_status',0)->count();
+        $approved_count = SellerProducts::where('seller_product_status',1)->count();
+        $disapproved_count = SellerProducts::where('seller_product_status',2)->count();
+        return view('admin.sellerProduct.index',compact('product_all_count','pending_count','approved_count','disapproved_count'));
     }
 
-    public function buyerProductPendingList(Request $request)
+    public function sellerProductPendingList(Request $request)
     {
         try {
-            $data = BuyerProducts::select('users.id','users.fullname','buyer_products.*')
-            ->leftJoin('users','buyer_products.user_id','users.id')
-            ->where('buyer_product_status',$request->status)
+            $data = SellerProducts::select('users.id','users.fullname','seller_products.*')
+            ->leftJoin('users','seller_products.user_id','users.id')
+            ->where('seller_product_status',$request->status)
             ->get();
 
             return Datatables::of($data)
@@ -36,18 +37,18 @@ class BuyerProductController extends Controller
                 ->addColumn('fullname', function($row){
                     return $row->fullname ? $row->fullname : '-';
                 })
-                ->addColumn('buyer_product_name', function($row){
-                    return $row->buyer_product_name ? $row->buyer_product_name : '-';
+                ->addColumn('seller_product_name', function($row){
+                    return $row->seller_product_name ? $row->seller_product_name : '-';
                 })
-                ->addColumn('buyer_product_created_at', function($row){
+                ->addColumn('seller_product_created_at', function($row){
                     return $row->created_at ? $row->created_at : '-';
                 })
-                ->addColumn('buyer_product_images', function($row){
-                    if($row->buyer_product_images)
+                ->addColumn('seller_product_images', function($row){
+                    if($row->seller_product_images)
                     {
-                        foreach(explode(',',$row->buyer_product_images) as $image_name)
+                        foreach(explode(',',$row->seller_product_images) as $image_name)
                         {
-                            $image = asset("public/upload/buyer_product_images/".$image_name);
+                            $image = asset("public/upload/seller_product_images/".$image_name);
                             return '<img src=" '.$image.' " style="width: 125px; height: 125px;" class="img-thumbnail"/>';
                         }
                     }
@@ -74,13 +75,13 @@ class BuyerProductController extends Controller
                 })
                 ->filter(function ($instance) use ($request) {
                     
-                    if (!empty($request->get('buyer_product_search'))) {
+                    if (!empty($request->get('seller_product_search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            if (Str::contains(Str::lower($row['fullname']), Str::lower($request->get('buyer_product_search')))){
+                            if (Str::contains(Str::lower($row['fullname']), Str::lower($request->get('seller_product_search')))){
                                 return true;
-                            }else if (Str::contains(Str::lower($row['buyer_product_name']), Str::lower($request->get('buyer_product_search')))){
+                            }else if (Str::contains(Str::lower($row['seller_product_name']), Str::lower($request->get('seller_product_search')))){
                                 return true;
-                            }else if (Str::contains(Str::lower($row['buyer_product_created_at']), Str::lower($request->get('buyer_product_search')))){
+                            }else if (Str::contains(Str::lower($row['seller_product_created_at']), Str::lower($request->get('seller_product_search')))){
                                 return true;
                             }else {
                                 return false;
@@ -88,58 +89,58 @@ class BuyerProductController extends Controller
                         });
                     }
                 })
-                ->rawColumns(['buyer_product_images','product_view','approve_and_disapprove_button'])
+                ->rawColumns(['seller_product_images','product_view','approve_and_disapprove_button'])
                 ->make(true);
         } catch (\Exception $ex) {
             return $this->sendErrorResponse($ex);
         }
     }
 
-    public function productView(Request $request)
+    public function sellerProductView(Request $request)
     {
         $id = $request->id;
-        $data = BuyerProducts::find($id);
+        $data = SellerProducts::find($id);
         $image_data = array();
-        if($data->buyer_product_images)
+        if($data->seller_product_images)
         {
-            foreach(explode(',',$data->buyer_product_images) as $image_name)
+            foreach(explode(',',$data->seller_product_images) as $image_name)
             {
-                $image = asset("public/upload/buyer_product_images/".$image_name);
+                $image = asset("public/upload/seller_product_images/".$image_name);
                 array_push($image_data,$image);
             }
         }
-        $data['buyer_product_images'] = $image_data;
+        $data['seller_product_images'] = $image_data;
         return response()->json($data);
     }
 
-    public function productApprove(Request $request)
+    public function sellerProductApprove(Request $request)
     {
-        $data = BuyerProducts::find($request->id);
+        $data = SellerProducts::find($request->id);
         if($data)
         {
-            $data->buyer_product_status = 1;
+            $data->seller_product_status = 1;
             $data->save();
         }
 
-        $pending_count = BuyerProducts::where('buyer_product_status',0)->count();
-        $approved_count = BuyerProducts::where('buyer_product_status',1)->count();
-        $disapproved_count = BuyerProducts::where('buyer_product_status',2)->count();
+        $pending_count = SellerProducts::where('seller_product_status',0)->count();
+        $approved_count = SellerProducts::where('seller_product_status',1)->count();
+        $disapproved_count = SellerProducts::where('seller_product_status',2)->count();
         $data = ['pending_count' => $pending_count, 'approved_count' => $approved_count,'disapproved_count' => $disapproved_count];
         return response()->json($data);
     }
 
-    public function productDisapprove(Request $request)
+    public function sellerProductDisapprove(Request $request)
     {
-        $data = BuyerProducts::find($request->id);
+        $data = SellerProducts::find($request->id);
         if($data)
         {
-            $data->buyer_product_status = 2;
+            $data->seller_product_status = 2;
             $data->save();
         }
         
-        $pending_count = BuyerProducts::where('buyer_product_status',0)->count();
-        $approved_count = BuyerProducts::where('buyer_product_status',1)->count();
-        $disapproved_count = BuyerProducts::where('buyer_product_status',2)->count();
+        $pending_count = SellerProducts::where('seller_product_status',0)->count();
+        $approved_count = SellerProducts::where('seller_product_status',1)->count();
+        $disapproved_count = SellerProducts::where('seller_product_status',2)->count();
         $data = ['pending_count' => $pending_count, 'approved_count' => $approved_count,'disapproved_count' => $disapproved_count];
         return response()->json($data);
     }

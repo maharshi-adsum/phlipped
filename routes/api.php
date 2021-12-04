@@ -47,6 +47,10 @@ Route::namespace('Api')->group(
                 //got one product
                 Route::post('gotOneAllProduct','CommonController@gotOneAllProduct');
                 Route::post('gotOneSingleProduct','CommonController@gotOneSingleProduct');
+
+                //seller product
+                Route::post('sellerPostProduct','SellerProductController@sellerPostProduct');
+                Route::post('sellerGetProduct','SellerProductController@sellerGetProduct');
             }
         );
     }

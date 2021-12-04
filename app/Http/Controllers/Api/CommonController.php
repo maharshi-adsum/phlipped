@@ -89,7 +89,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $buyerProductGet = BuyerProducts::where('product_status',1)->orderBy('id', 'DESC');
+            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->orderBy('id', 'DESC');
 
             $dataCount = $buyerProductGet->count();
 
@@ -106,10 +106,10 @@ class CommonController extends Controller
             $product_array = array();
             foreach($buyerProductGet['data'] as $data)
             {
-                $product_data['product_id'] = $data['id'];
+                $product_data['buyer_product_id'] = $data['id'];
                 $product_data['buyer_product_name'] = $data['buyer_product_name'];
                 $product_data['buyer_product_description'] = $data['buyer_product_description'];
-                $product_data['product_status'] = $data['product_status'];
+                $product_data['buyer_product_status'] = $data['buyer_product_status'];
                 $image_array_store = array();
                 foreach(explode(',',$data['buyer_product_images']) as $image_name)
                 {
@@ -155,7 +155,7 @@ class CommonController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="product_id",
+     *     property="buyer_product_id",
      *     type="string"
      *     ),
      *    )
@@ -192,7 +192,7 @@ class CommonController extends Controller
         try{
             $input = $request->all();
 
-            $requiredParams = $this->requiredRequestParams('got_one_single_product');
+            $requiredParams = $this->requiredRequestParams('common_validation');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
@@ -204,7 +204,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $gotOnebuyerProductGet = BuyerProducts::where('id',$input['product_id'])->where('product_status',1)->first();
+            $gotOnebuyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->first();
 
             if($gotOnebuyerProductGet)
             {
@@ -214,10 +214,10 @@ class CommonController extends Controller
                     array_push($image_array_store, asset("public/upload/buyer_product_images/".$image_name));
                 }
     
-                $data['product_id'] = $gotOnebuyerProductGet->id;
+                $data['buyer_product_id'] = $gotOnebuyerProductGet->id;
                 $data['buyer_product_name'] = $gotOnebuyerProductGet->buyer_product_name;
                 $data['buyer_product_description'] = $gotOnebuyerProductGet->buyer_product_description;
-                $data['product_status'] = $gotOnebuyerProductGet->product_status;
+                $data['buyer_product_status'] = $gotOnebuyerProductGet->buyer_product_status;
                 $data['buyer_product_images'] = $image_array_store;
     
                 return response()->json(['status' => "true",'data' => $data, 'messages' => array('Got one product list found')]);
@@ -237,10 +237,10 @@ class CommonController extends Controller
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {
-            case 'got_one_single_product':
+            case 'common_validation':
                 $params = [
                     'user_id' => 'required|exists:users,id',
-                    'product_id' => 'required|exists:buyer_products,id',
+                    'buyer_product_id' => 'required|exists:buyer_products,id',
                 ];
                 break;
             case 'got_one_product':

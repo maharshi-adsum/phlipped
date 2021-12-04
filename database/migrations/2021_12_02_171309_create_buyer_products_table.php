@@ -19,7 +19,7 @@ class CreateBuyerProductsTable extends Migration
             $table->string('buyer_product_name')->nullable();
             $table->text('buyer_product_images')->nullable();
             $table->text('buyer_product_description')->nullable();
-            $table->integer('product_status')->comment('0 : processing/pendding, 1 : approve, 2 : approved')->default(0);
+            $table->integer('buyer_product_status')->comment('0 : processing/pendding, 1 : approve, 2 : disapproved')->default(0);
             $table->timestamps();
         });
     }

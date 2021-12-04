@@ -52,4 +52,12 @@ Route::group(['middleware' => 'adminAuth'], function ()
         Route::post('productDisapprove','BuyerProductController@productDisapprove')->name('productDisapprove');
         Route::post('buyerProductPendingList','BuyerProductController@buyerProductPendingList')->name('buyerProductPendingList');
     });
+
+    Route::group(['prefix' => '/manage_seller_product'], function(){
+        Route::get('sellerProductIndex','SellerProductController@sellerProductIndex')->name('sellerProductIndex');
+        Route::get('sellerProductView','SellerProductController@sellerProductView')->name('sellerProductView');
+        Route::post('sellerProductApprove','SellerProductController@sellerProductApprove')->name('sellerProductApprove');
+        Route::post('sellerProductDisapprove','SellerProductController@sellerProductDisapprove')->name('sellerProductDisapprove');
+        Route::post('sellerProductPendingList','SellerProductController@sellerProductPendingList')->name('sellerProductPendingList');
+    });
 });
