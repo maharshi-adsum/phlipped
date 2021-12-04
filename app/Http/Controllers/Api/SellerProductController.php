@@ -113,7 +113,7 @@ class SellerProductController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)
@@ -228,7 +228,7 @@ class SellerProductController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)

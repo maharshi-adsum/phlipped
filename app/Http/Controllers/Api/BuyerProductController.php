@@ -88,12 +88,12 @@ class BuyerProductController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
             $data['user_id'] = $input['user_id'];
@@ -191,12 +191,12 @@ class BuyerProductController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
             $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
@@ -217,11 +217,11 @@ class BuyerProductController extends Controller
                     $product_data['buyer_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);
                 }
-                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Buyer product list found')]);
+                return response()->json(['status' => "true", 'data' => $product_array, 'messages' => array('Buyer product list found')]);
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Something went wrong!')]);
             }
 
         } catch (Exception $e) {

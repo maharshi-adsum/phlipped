@@ -126,7 +126,7 @@ class AuthController extends Controller
             $requiredParams = $this->requiredRequestParams('signup');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
             $input['password'] = Hash::make($input['password']);
             
@@ -148,12 +148,12 @@ class AuthController extends Controller
                 }
                 else
                 {
-                    return response()->json(['status' => "false",'data' => "", 'messages' => array('These credentials do not match our records.')]);
+                    return response()->json(['status' => "false", 'data' => "", 'messages' => array('These credentials do not match our records.')]);
                 }
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong. Please try again.')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Something went wrong. Please try again.')]);
             }
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
@@ -238,7 +238,7 @@ class AuthController extends Controller
             $requiredParams = $this->requiredRequestParams('login');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             $credentials = array_values(
@@ -256,7 +256,7 @@ class AuthController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('These credentials do not match our records.')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('These credentials do not match our records.')]);
             }
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
@@ -356,7 +356,7 @@ class AuthController extends Controller
             $requiredParams = $this->requiredRequestParams('forgetPassword');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
@@ -366,7 +366,7 @@ class AuthController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Your phone number not found')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Your phone number not found')]);
             }
         } catch (NotFoundHttpException $ex) {
             return $this->notFoundRequest($ex);
@@ -449,13 +449,13 @@ class AuthController extends Controller
             $requiredParams = $this->requiredRequestParams('resetPassword');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
             
             $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('User does not exist')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('User does not exist')]);
             }
 
             $user->password = Hash::make($input['password']);
@@ -548,13 +548,13 @@ class AuthController extends Controller
             $requiredParams = $this->requiredRequestParams('changePassword');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
             
             $user = User::select('id','fullname','email','country_code','phone_number','password')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('User does not exist')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('User does not exist')]);
             }
 
             if(Hash::check($input['old_password'], $user->password))
@@ -568,12 +568,12 @@ class AuthController extends Controller
                 }
                 else
                 {
-                    return response()->json(['status' => "false",'data' => "", 'messages' => array('The password confirmation does not match')]);
+                    return response()->json(['status' => "false", 'data' => "", 'messages' => array('The password confirmation does not match')]);
                 }
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('The old password does not match')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('The old password does not match')]);
             }
 
         } catch (NotFoundHttpException $ex) {

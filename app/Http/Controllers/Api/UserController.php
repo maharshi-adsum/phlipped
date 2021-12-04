@@ -75,7 +75,7 @@ class UserController extends Controller
             $requiredParams = $this->requiredRequestParams('user_profile_get');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)
@@ -182,7 +182,7 @@ class UserController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)
@@ -194,7 +194,7 @@ class UserController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             $user = User::where('id',$input['user_id'])->first();
