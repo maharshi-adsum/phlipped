@@ -650,7 +650,7 @@ class AuthController extends Controller
             case 'signup':
                 $params = [
                     'fullname' => 'required|min:3',
-                    'email' => 'required|email|unique:users',
+                    'email' => 'required|email',
                     'country_code' => 'required',
                     'phone_number' => 'required|numeric|unique:users',
                     'password' => 'required|min:8',
@@ -658,7 +658,8 @@ class AuthController extends Controller
                 break;
             case 'login':
                 $params = [
-                    'phone_number' => 'required|numeric',
+                    'country_code' => 'required|exists:users,country_code',
+                    'phone_number' => 'required|exists:users,phone_number',
                     'password' => 'required|min:8',
                 ];
                 break;
@@ -670,15 +671,15 @@ class AuthController extends Controller
                 break;
             case 'resetPassword':
                 $params = [
-                    'country_code' => 'required',
-                    'phone_number' => 'required|numeric',
+                    'country_code' => 'required|exists:users,country_code',
+                    'phone_number' => 'required|exists:users,phone_number',
                     'password' => 'required|confirmed|min:8',
                 ];
                 break;
             case 'changePassword':
                 $params = [
-                    'country_code' => 'required',
-                    'phone_number' => 'required|numeric',
+                    'country_code' => 'required|exists:users,country_code',
+                    'phone_number' => 'required|exists:users,phone_number',
                     'old_password' => 'required|min:8',
                     'new_password' => 'required|min:8',
                     'confirm_new_password' => 'required|min:8',

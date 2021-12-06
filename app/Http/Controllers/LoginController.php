@@ -141,7 +141,7 @@ class LoginController extends Controller
             $requiredParams = $this->requiredRequestParams('changePassword');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             $admin = Admin::where('id',session('id'))->first();
