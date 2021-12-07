@@ -146,7 +146,7 @@ class AuthController extends Controller
                     $update = User::where('id',$user['id'])->update(['device_token'=>$input['device_token'],'device_type'=>$input['device_type']]);
                     $success = $this->loginfunction($input,$user);
                     return $this->successResponse(
-                        $success,'You have successfully registered and otp send your phone number'
+                        $success,'You have successfully registered and otp sent to your phone number.'
                     );
                 }
                 else
@@ -369,7 +369,7 @@ class AuthController extends Controller
             $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if($user)
             {
-                return $this->successResponse($user->toArray(),('Your phone number match successfully'));
+                return $this->successResponse($user->toArray(),('Otp sent to your phone number.'));
             }
             else
             {
