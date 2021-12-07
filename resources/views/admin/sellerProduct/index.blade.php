@@ -342,6 +342,7 @@
 
     $(document).on('click', '.approve', function () {
         var id = $(this).attr('data-id');
+        var status = 1;
         swal({
             title: "Are you sure?",
             text: "Are you sure you want to approve this record",
@@ -359,9 +360,10 @@
 
             $.ajax({
                 type: 'POST',
-                url: "{{route('sellerProductApprove')}}",
+                url: "{{route('sellerproductApproveDisapprove')}}",
                 data: {
-                    id: id
+                    id: id,
+                    status: status
                 },
                 dataType: 'JSON',
                 success: function (data) {
@@ -379,6 +381,7 @@
 
     $(document).on('click', '.disapprove', function () {
         var id = $(this).attr('data-id');
+        var status = 2;
         swal({
             title: "Are you sure?",
             text: "Are you sure you want to disapprove this record",
@@ -396,9 +399,10 @@
 
             $.ajax({
                 type: 'POST',
-                url: "{{route('sellerProductDisapprove')}}",
+                url: "{{route('sellerproductApproveDisapprove')}}",
                 data: {
-                    id: id
+                    id: id,
+                    status: status
                 },
                 dataType: 'JSON',
                 success: function (data) {

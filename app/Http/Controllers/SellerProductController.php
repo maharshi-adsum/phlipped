@@ -113,31 +113,15 @@ class SellerProductController extends Controller
         return response()->json($data);
     }
 
-    public function sellerProductApprove(Request $request)
+    public function sellerproductApproveDisapprove(Request $request)
     {
         $data = SellerProducts::find($request->id);
         if($data)
         {
-            $data->seller_product_status = 1;
+            $data->seller_product_status = $request->status;
             $data->save();
         }
 
-        $pending_count = SellerProducts::where('seller_product_status',0)->count();
-        $approved_count = SellerProducts::where('seller_product_status',1)->count();
-        $disapproved_count = SellerProducts::where('seller_product_status',2)->count();
-        $data = ['pending_count' => $pending_count, 'approved_count' => $approved_count,'disapproved_count' => $disapproved_count];
-        return response()->json($data);
-    }
-
-    public function sellerProductDisapprove(Request $request)
-    {
-        $data = SellerProducts::find($request->id);
-        if($data)
-        {
-            $data->seller_product_status = 2;
-            $data->save();
-        }
-        
         $pending_count = SellerProducts::where('seller_product_status',0)->count();
         $approved_count = SellerProducts::where('seller_product_status',1)->count();
         $disapproved_count = SellerProducts::where('seller_product_status',2)->count();

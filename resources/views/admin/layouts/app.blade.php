@@ -233,7 +233,7 @@
                         @endif
                         <li class="nav-item">
                             <a href="{{route('buyerProductIndex')}}" class="nav-link active-hover {{$active}}">
-                                <i class="fa fa-users nav-icon"></i>
+                                <i class="far fa-list-alt nav-icon"></i>
                                 <p>Manage Buyer Product</p>
                             </a>
                         </li>
@@ -247,7 +247,7 @@
                         @endif
                         <li class="nav-item">
                             <a href="{{route('sellerProductIndex')}}" class="nav-link active-hover {{$active}}">
-                                <i class="fa fa-users nav-icon"></i>
+                                <i class="far fa-list-alt nav-icon"></i>
                                 <p>Manage Seller Product</p>
                             </a>
                         </li>
@@ -261,7 +261,7 @@
                         @endif
                         <li class="nav-item">
                             <a href="{{route('setting')}}" class="nav-link active-hover {{$active}}">
-                                <i class="fa fa-users nav-icon"></i>
+                                <i class="fas fa-cogs nav-icon"></i>
                                 <p>Manage Setting</p>
                             </a>
                         </li>

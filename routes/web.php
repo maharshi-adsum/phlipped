@@ -48,16 +48,15 @@ Route::group(['middleware' => 'adminAuth'], function ()
     Route::group(['prefix' => '/manage_buyer_product'], function(){
         Route::get('buyerProductIndex','BuyerProductController@buyerProductIndex')->name('buyerProductIndex');
         Route::get('productView','BuyerProductController@productView')->name('productView');
-        Route::post('productApprove','BuyerProductController@productApprove')->name('productApprove');
-        Route::post('productDisapprove','BuyerProductController@productDisapprove')->name('productDisapprove');
+        Route::post('productApproveDisapprove','BuyerProductController@productApproveDisapprove')->name('productApproveDisapprove');
+        Route::post('productApproveDisapprove','BuyerProductController@productApproveDisapprove')->name('productApproveDisapprove');
         Route::post('buyerProductPendingList','BuyerProductController@buyerProductPendingList')->name('buyerProductPendingList');
     });
 
     Route::group(['prefix' => '/manage_seller_product'], function(){
         Route::get('sellerProductIndex','SellerProductController@sellerProductIndex')->name('sellerProductIndex');
         Route::get('sellerProductView','SellerProductController@sellerProductView')->name('sellerProductView');
-        Route::post('sellerProductApprove','SellerProductController@sellerProductApprove')->name('sellerProductApprove');
-        Route::post('sellerProductDisapprove','SellerProductController@sellerProductDisapprove')->name('sellerProductDisapprove');
+        Route::post('sellerproductApproveDisapprove','SellerProductController@sellerproductApproveDisapprove')->name('sellerproductApproveDisapprove');
         Route::post('sellerProductPendingList','SellerProductController@sellerProductPendingList')->name('sellerProductPendingList');
     });
 });
