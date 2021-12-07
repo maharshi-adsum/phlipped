@@ -51,6 +51,10 @@ Route::namespace('Api')->group(
                 //seller product
                 Route::post('sellerPostProduct','SellerProductController@sellerPostProduct');
                 Route::post('sellerGetProduct','SellerProductController@sellerGetProduct');
+
+                //approved seller product
+                Route::post('approvedSellerAllProductList','CommonController@approvedSellerAllProductList');
+                Route::post('approvedSellerOneProductList','CommonController@approvedSellerOneProductList');
             }
         );
     }
