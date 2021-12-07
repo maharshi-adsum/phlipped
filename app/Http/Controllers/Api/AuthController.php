@@ -144,7 +144,10 @@ class AuthController extends Controller
                 if($user = $this->authenticator->attemptSignUp($credentials))
                 {
                     $update = User::where('id',$user['id'])->update(['device_token'=>$input['device_token'],'device_type'=>$input['device_type']]);
-                    return $this->loginfunction($input,$user);
+                    $success = $this->loginfunction($input,$user);
+                    return $this->successResponse(
+                        $success,'You have successfully registered and otp send your phone number'
+                    );
                 }
                 else
                 {
@@ -252,7 +255,10 @@ class AuthController extends Controller
             if($user = $this->authenticator->attemptLogin($credentials))
             {
                 $update = User::where('id',$user['id'])->update(['device_token'=>$input['device_token'],'device_type'=>$input['device_type']]);
-                return $this->loginfunction($input,$user);
+                $success = $this->loginfunction($input,$user);
+                return $this->successResponse(
+                    $success,'You Have Successfully Logged in to phlipped.'
+                );
             }
             else
             {
@@ -280,9 +286,10 @@ class AuthController extends Controller
             $tokenResult->token->expires_at
         )->toDateTimeString();
         $success['user'] = $user;
-        return $this->successResponse(
-            $success,'You Have Successfully Logged in to phlipped.'
-        );
+        return $success;
+        // return $this->successResponse(
+        //     $success,'You Have Successfully Logged in to phlipped.'
+        // );
     }
 
     /**
