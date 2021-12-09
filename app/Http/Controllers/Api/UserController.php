@@ -252,7 +252,7 @@ class UserController extends Controller
                 $params = [
                     'user_id' => 'required|exists:users,id',
                     'fullname' => 'required',
-                    'email' => 'required|unique:users,email,'.$id,
+                    'email' => 'required',
                     'country_code' => 'required',
                     'phone_number' => 'required|unique:users,phone_number,'.$id,
                     'user_image' => 'required',
