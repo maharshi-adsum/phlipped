@@ -27,15 +27,20 @@ class SellerProductController extends Controller
     public function sellerProductPendingList(Request $request)
     {
         try {
-            $data = SellerProducts::select('users.id','users.fullname','seller_products.*')
-            ->leftJoin('users','seller_products.user_id','users.id')
+            $data = SellerProducts::select('S.fullname as seller_name','B.fullname as buyer_name','seller_products.user_id','seller_products.buyer_product_id','seller_products.id','seller_products.seller_product_name','seller_products.seller_product_images','seller_products.seller_product_status','seller_products.created_at','buyer_products.user_id as buyer_user_id')
+            ->leftJoin('users as S','seller_products.user_id','S.id')
+            ->leftJoin('buyer_products','seller_products.buyer_product_id','buyer_products.id')
+            ->leftJoin('users as B','buyer_products.user_id','B.id') 
             ->where('seller_product_status',$request->status)
             ->get();
 
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('fullname', function($row){
-                    return $row->fullname ? $row->fullname : '-';
+                ->addColumn('buyer_name', function($row){
+                    return $row->buyer_name ? $row->buyer_name : '-';
+                })
+                ->addColumn('seller_name', function($row){
+                    return $row->seller_name ? $row->seller_name : '-';
                 })
                 ->addColumn('seller_product_name', function($row){
                     return $row->seller_product_name ? $row->seller_product_name : '-';
@@ -77,7 +82,9 @@ class SellerProductController extends Controller
                     
                     if (!empty($request->get('seller_product_search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            if (Str::contains(Str::lower($row['fullname']), Str::lower($request->get('seller_product_search')))){
+                            if (Str::contains(Str::lower($row['seller_name']), Str::lower($request->get('seller_product_search')))){
+                                return true;
+                            }else if (Str::contains(Str::lower($row['buyer_name']), Str::lower($request->get('seller_product_search')))){
                                 return true;
                             }else if (Str::contains(Str::lower($row['seller_product_name']), Str::lower($request->get('seller_product_search')))){
                                 return true;

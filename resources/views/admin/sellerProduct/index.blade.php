@@ -44,6 +44,7 @@
                             <thead>
                                 <tr>
                                     <th>Sr. No</th>
+                                    <th>Buyer Name</th>
                                     <th>Seller Name</th>
                                     <th>Product Name</th>
                                     <th>Product Image</th>
@@ -61,6 +62,7 @@
                             <thead>
                                 <tr>
                                     <th>Sr. No</th>
+                                    <th>Buyer Name</th>
                                     <th>Seller Name</th>
                                     <th>Product Name</th>
                                     <th>Product Image</th>
@@ -79,6 +81,7 @@
                                 <tr>
                                     <th>Sr. No</th>
                                     <th>Seller Name</th>
+                                    <th>Buyer Name</th>
                                     <th>Product Name</th>
                                     <th>Product Image</th>
                                     <th>Created Date</th>
@@ -161,8 +164,12 @@
                     name: 'id'
                 },
                 {
-                    data: 'fullname',
-                    name: 'fullname'
+                    data: 'buyer_name',
+                    name: 'buyer_name'
+                },
+                {
+                    data: 'seller_name',
+                    name: 'seller_name'
                 },
                 {
                     data: 'seller_product_name',
@@ -215,8 +222,12 @@
                     name: 'id'
                 },
                 {
-                    data: 'fullname',
-                    name: 'fullname'
+                    data: 'buyer_name',
+                    name: 'buyer_name'
+                },
+                {
+                    data: 'seller_name',
+                    name: 'seller_name'
                 },
                 {
                     data: 'seller_product_name',
@@ -269,8 +280,12 @@
                     name: 'id'
                 },
                 {
-                    data: 'fullname',
-                    name: 'fullname'
+                    data: 'buyer_name',
+                    name: 'buyer_name'
+                },
+                {
+                    data: 'seller_name',
+                    name: 'seller_name'
                 },
                 {
                     data: 'seller_product_name',
