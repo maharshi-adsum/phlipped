@@ -20,4 +20,9 @@ class BuyerProducts extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
+
+    public function sellerProduct()
+    {
+        return $this->hasMany('App\Models\SellerProducts','buyer_product_id','id');
+    }
 }

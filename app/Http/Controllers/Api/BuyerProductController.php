@@ -199,7 +199,7 @@ class BuyerProductController extends Controller
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+            $buyerProductGet = BuyerProducts::with('sellerProduct')->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
             if(!$buyerProductGet->isEmpty())
             {
                 $product_array = array();
@@ -209,6 +209,8 @@ class BuyerProductController extends Controller
                     $product_data['buyer_product_name'] = $data['buyer_product_name'];
                     $product_data['buyer_product_description'] = $data['buyer_product_description'];
                     $product_data['buyer_product_status'] = $data['buyer_product_status'];
+                    $product_data['highest_price'] = $data->sellerProduct->pluck('seller_product_price')->max() ? $data->sellerProduct->pluck('seller_product_price')->max() : 0;
+                    $product_data['lowest_price'] = $data->sellerProduct->pluck('seller_product_price')->min() ? $data->sellerProduct->pluck('seller_product_price')->min() : 0;
                     $image_array_store = array();
                     foreach(explode(',',$data->buyer_product_images) as $image_name)
                     {
