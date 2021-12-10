@@ -37,6 +37,7 @@ Route::group(['middleware' => 'adminAuth'], function ()
     Route::group(['prefix' => '/manage_users'], function(){
         Route::get('listUsersIndex','UserController@listUsersIndex')->name('listUsersIndex');
         Route::post('usersList','UserController@usersList')->name('usersList');
+        Route::post('userDelete','UserController@userDelete')->name('userDelete');
     });
 
     Route::group(['prefix' => '/manage_setting'], function(){

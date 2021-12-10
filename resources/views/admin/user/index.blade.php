@@ -32,6 +32,7 @@
                             <th>Full Name</th>
                             <th>Email</th>
                             <th>Phone Number</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                 </table>
@@ -81,7 +82,13 @@
                 {
                     data: 'country_code_with_phone_number',
                     name: 'country_code_with_phone_number'
-                }
+                },
+                {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false
+                },
             ]
         });
 
@@ -93,6 +100,43 @@
     $('#reset').on('click', function () {
         $('#search').val('');
         $('#datatable_users').DataTable().draw(true);
+    });
+
+    $(document).on('click', '.delete', function () {
+        var id = $(this).attr('data-id');
+        swal({
+            title: "Are you sure?",
+            text: "You will not be able to recover this user!",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "Yes, delete it!",
+            closeOnConfirm: false
+        }, function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: "{{route('userDelete')}}",
+                data: {
+                    id: id
+                },
+                dataType: 'JSON',
+                success: function (data) {
+                    swal({
+                        title: "Deleted!",
+                        text: "User has been deleted.",
+                        type: "success"
+                    }, function () {
+                        $('#datatable_users').DataTable().draw(true);
+                    });
+                }
+            });
+        });
     });
 </script>
 @endsection

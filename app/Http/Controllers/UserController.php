@@ -30,6 +30,10 @@ class UserController extends Controller
                 ->editColumn('country_code_with_phone_number', function($row){
                     return $row->country_code . ' - ' . $row->phone_number;
                 })
+                ->addColumn('action', function($row){
+                    $btn = '<a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="'. $row->id .'"><span class="fa fa-trash"></span></a>';
+                    return $btn;
+                })
                 ->filter(function ($instance) use ($request) {
                     
                     if (!empty($request->get('user_search'))) {
@@ -50,6 +54,20 @@ class UserController extends Controller
                 ->make(true);
         } catch (\Exception $ex) {
             return $this->sendErrorResponse($ex);
+        }
+    }
+
+    public function userDelete(Request $request)
+    {
+        $user_delete = User::where('id',$request->get('id'))->first();
+        if($user_delete) 
+        {
+            $user_delete->delete();
+            return response()->json(['status' => true, 'msg' => 'User successfully deleted.']);
+        }
+        else 
+        {
+            return response()->json(['status' => false, 'msg' => 'Something went wrong!']);
         }
     }
 }
