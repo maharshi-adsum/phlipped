@@ -15,13 +15,13 @@ class UserController extends Controller
     use ResponseTrait, UtilityTrait;
 
     /**
-     * Swagger defination Get user profile details
+     * Swagger defination Get user profile or address details By user_id
      *
      * @OA\Post(
-     *     tags={"User Profile"},
+     *     tags={"User Profile & Address"},
      *     path="/userProfileGet",
-     *     description="Get user profile details By user_id",
-     *     summary="Get user profile details",
+     *     description="Get user profile or address details By user_id",
+     *     summary="Get user profile or address details By user_id",
      *     operationId="User Profile",
      * @OA\Parameter(
      *     name="Content-Language",
@@ -83,7 +83,7 @@ class UserController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $user = User::select('id','fullname','email','country_code','phone_number','user_image')->where('id',$input['user_id'])->where('is_active',1)->first();
+            $user = User::select('id','fullname','email','country_code','phone_number','user_image','street','city','state','country','pincode')->where('id',$input['user_id'])->where('is_active',1)->first();
             if($user)
             {
                 return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile found.')]);
@@ -104,7 +104,7 @@ class UserController extends Controller
      * Swagger defination User Profile Update
      *
      * @OA\Post(
-     *     tags={"User Profile"},
+     *     tags={"User Profile & Address"},
      *     path="/userProfileUpdate",
      *     description="User Profile Update",
      *     summary="User Profile Update",
@@ -244,6 +244,120 @@ class UserController extends Controller
             return $this->sendErrorResponse($e);
         }
     }
+
+    /**
+     * Swagger defination user address add update
+     *
+     * @OA\Post(
+     *     tags={"User Profile & Address"},
+     *     path="/userAddressUpdate",
+     *     description="user address add update",
+     *     summary="user address add update",
+     *     operationId="userAddressUpdate",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="street",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="city",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="state",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="country",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="pincode",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+
+    public function userAddressUpdate(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            $requiredParams = $this->requiredRequestParams('user_address_update');
+            $validator = Validator::make($input, $requiredParams);
+            if ($validator->fails()) 
+            {
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+            }
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Unauthorized access')]);
+            }
+
+            $addUpdateAddress = User::where('id',$input['user_id'])->first();
+            
+            if($addUpdateAddress)
+            {
+                $addUpdateAddress->street = $input['street'];
+                $addUpdateAddress->city = $input['city'];
+                $addUpdateAddress->state = $input['state'];
+                $addUpdateAddress->country = $input['country'];
+                $addUpdateAddress->pincode = $input['pincode'];
+                $addUpdateAddress->save();
+                return response()->json(['status' => "true",'data' => $addUpdateAddress->toArray(), 'messages' => array('Address successfully saved')]);
+            }
+            else
+            {
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
     
     public function requiredRequestParams(string $action, $id = '')
     {
@@ -261,6 +375,16 @@ class UserController extends Controller
             case 'user_profile_get':
                 $params = [
                     'user_id' => 'required|exists:users,id',
+                ];
+                break;
+            case 'user_address_update':
+                $params = [
+                    'user_id' => 'required|exists:users,id',
+                    'street' => 'required',
+                    'city' => 'required',
+                    'state' => 'required',
+                    'country' => 'required',
+                    'pincode' => 'required|numeric',
                 ];
                 break;
             default:

@@ -39,6 +39,7 @@ Route::namespace('Api')->group(
                 //user profile
                 Route::post('userProfileGet','UserController@userProfileGet');
                 Route::post('userProfileUpdate','UserController@userProfileUpdate');
+                Route::post('userAddressUpdate','UserController@userAddressUpdate');
 
                 //buyer product
                 Route::post('buyerPostProduct','BuyerProductController@buyerPostProduct');
