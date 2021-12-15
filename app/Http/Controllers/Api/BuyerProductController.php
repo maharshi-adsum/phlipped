@@ -85,7 +85,8 @@ class BuyerProductController extends Controller
             $input = $request->all();
 
             $requiredParams = $this->requiredRequestParams('buyer_post_product');
-            $validator = Validator::make($input, $requiredParams);
+            $messsages = array('buyer_product_images.*.required'=>'The buyer product images field is required.');
+            $validator = Validator::make($input, $requiredParams, $messsages);
             if ($validator->fails()) 
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
@@ -240,7 +241,7 @@ class BuyerProductController extends Controller
                 $params = [
                     'user_id' => 'required|exists:users,id',
                     'buyer_product_name' => 'required',
-                    'buyer_product_images' => 'required',
+                    'buyer_product_images.*' => 'required',
                     'buyer_product_description' => 'required',
                 ];
                 break;

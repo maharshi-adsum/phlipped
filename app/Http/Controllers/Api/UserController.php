@@ -129,10 +129,6 @@ class UserController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="country_code",
-     *     type="string"
-     *     ),
-     * @OA\Property(
      *     property="email",
      *     type="string"
      *     ),
@@ -195,7 +191,6 @@ class UserController extends Controller
 
             $user = User::where('id',$input['user_id'])->first();
             $user->fullname = $input['fullname'];
-            $user->country_code = $input['country_code'];
             $user->email = $input['email'];
             if($request->hasfile('user_image'))
             {
@@ -362,7 +357,6 @@ class UserController extends Controller
                     'user_id' => 'required|exists:users,id',
                     'fullname' => 'required',
                     'email' => 'required',
-                    'country_code' => 'required',
                     'user_image' => 'required',
                 ];
                 break;
