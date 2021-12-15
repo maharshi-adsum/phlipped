@@ -133,10 +133,6 @@ class UserController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="phone_number",
-     *     type="string"
-     *     ),
-     * @OA\Property(
      *     property="email",
      *     type="string"
      *     ),
@@ -200,7 +196,6 @@ class UserController extends Controller
             $user = User::where('id',$input['user_id'])->first();
             $user->fullname = $input['fullname'];
             $user->country_code = $input['country_code'];
-            $user->phone_number = $input['phone_number'];
             $user->email = $input['email'];
             if($request->hasfile('user_image'))
             {
@@ -368,7 +363,6 @@ class UserController extends Controller
                     'fullname' => 'required',
                     'email' => 'required',
                     'country_code' => 'required',
-                    'phone_number' => 'required|unique:users,phone_number,'.$id,
                     'user_image' => 'required',
                 ];
                 break;
