@@ -665,8 +665,8 @@ class AuthController extends Controller
                 break;
             case 'login':
                 $params = [
-                    'country_code' => 'required|exists:users,country_code',
-                    'phone_number' => 'required|exists:users,phone_number',
+                    'country_code' => 'required',
+                    'phone_number' => 'required',
                     'password' => 'required|min:8',
                 ];
                 break;
