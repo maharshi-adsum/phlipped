@@ -109,14 +109,12 @@ class CommonController extends Controller
             {
                 $product_data['buyer_product_id'] = $data['id'];
                 $product_data['buyer_product_name'] = $data['buyer_product_name'];
-                $product_data['buyer_product_description'] = $data['buyer_product_description'];
-                $product_data['buyer_product_status'] = $data['buyer_product_status'];
-                $image_array_store = array();
-                foreach(explode(',',$data['buyer_product_images']) as $image_name)
+                $product_data['buyer_product_images'] = "";
+                if($data['buyer_product_images'])
                 {
-                    array_push($image_array_store, asset("public/upload/buyer_product_images/".$image_name));
+                    $image_name = explode(',',$data['buyer_product_images']);
+                    $product_data['buyer_product_images'] = asset("public/upload/buyer_product_images/".$image_name[0]);
                 }
-                $product_data['buyer_product_images'] = $image_array_store;
                 array_push($product_array, $product_data);
             }
 
