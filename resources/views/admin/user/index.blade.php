@@ -80,8 +80,8 @@
                     name: 'email'
                 },
                 {
-                    data: 'country_code_with_phone_number',
-                    name: 'country_code_with_phone_number'
+                    data: 'phone_number',
+                    name: 'phone_number'
                 },
                 {
                     data: 'action',

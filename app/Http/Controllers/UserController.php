@@ -27,8 +27,8 @@ class UserController extends Controller
 
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->editColumn('country_code_with_phone_number', function($row){
-                    return $row->country_code . ' - ' . $row->phone_number;
+                ->editColumn('phone_number', function($row){
+                    return $row->phone_number;
                 })
                 ->addColumn('action', function($row){
                     $btn = '<a href="javascript:void(0)" class="delete btn btn-danger btn-sm" data-id="'. $row->id .'"><span class="fa fa-trash"></span></a>';
