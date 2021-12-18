@@ -360,11 +360,11 @@ class AuthController extends Controller
         try {
             $input = $request->all();
 
-            $requiredParams = $this->requiredRequestParams('forgetPassword');
-            $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
-            }
+            // $requiredParams = $this->requiredRequestParams('forgetPassword');
+            // $validator = Validator::make($input, $requiredParams);
+            // if ($validator->fails()) {
+            //     return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+            // }
 
             $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if($user)
