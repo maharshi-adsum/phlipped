@@ -18,7 +18,7 @@ class AddColumnAddreessUsersTable extends Migration
             $table->string('city')->after('street')->nullable();
             $table->string('state')->after('city')->nullable();
             $table->string('country')->after('state')->nullable();
-            $table->integer('pincode')->after('country')->default(0);
+            $table->string('pincode', 15)->after('country')->nullable();
         });
     }
 

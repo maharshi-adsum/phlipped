@@ -372,7 +372,7 @@ class UserController extends Controller
                     'city' => 'required',
                     'state' => 'required',
                     'country' => 'required',
-                    'pincode' => 'required|numeric',
+                    'pincode' => 'required',
                 ];
                 break;
             default:
