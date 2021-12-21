@@ -657,7 +657,7 @@ class AuthController extends Controller
             case 'signup':
                 $params = [
                     'fullname' => 'required|min:3',
-                    'email' => 'required|email',
+                    'email' => 'required|email|unique:users',
                     'country_code' => 'required',
                     'phone_number' => 'required|numeric|unique:users',
                     'password' => 'required|min:8',
