@@ -152,7 +152,7 @@ class LoginController extends Controller
                     $admin->password = Hash::make($input['new_password']);
                     $admin->save();
                     $data['status'] = 1;
-                    $data['messages'] = 'Your password successfully saved';
+                    $data['messages'] = 'Your password changed successfully';
                     return response()->json($data);
                 }
                 else

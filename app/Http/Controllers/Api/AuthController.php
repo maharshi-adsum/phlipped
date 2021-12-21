@@ -468,7 +468,7 @@ class AuthController extends Controller
             $user->password = Hash::make($input['password']);
             $user->save();
             
-            return $this->successResponse($user->toArray(),('Your password successfully saved'));
+            return $this->successResponse($user->toArray(),('Your password changed successfully'));
 
         } catch (NotFoundHttpException $ex) {
             return $this->notFoundRequest($ex);
@@ -571,7 +571,7 @@ class AuthController extends Controller
                     $user->password = Hash::make($input['new_password']);
                     $user->save();
                     unset($user['updated_at']);
-                    return $this->successResponse($user->toArray(),('Your password successfully saved'));
+                    return $this->successResponse($user->toArray(),('Your password changed successfully'));
                 }
                 else
                 {
