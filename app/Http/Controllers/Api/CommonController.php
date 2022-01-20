@@ -441,8 +441,7 @@ class CommonController extends Controller
                 $data['seller_product_description'] = $sellerProduct->seller_product_description;
                 $data['seller_product_price'] = $sellerProduct->seller_product_price;
                 $data['seller_product_condition'] = $sellerProduct->seller_product_condition;
-                $data['seller_product_latitude'] = $sellerProduct->seller_product_latitude;
-                $data['seller_product_longitude'] = $sellerProduct->seller_product_longitude;
+                $data['seller_product_location'] = $sellerProduct->seller_product_location;
                 $data['seller_product_shipping_charges'] = $sellerProduct->seller_product_shipping_charges;
     
                 return response()->json(['status' => "true",'data' => $data , 'messages' => array('Seller product found')]);

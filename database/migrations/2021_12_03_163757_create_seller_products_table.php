@@ -22,8 +22,7 @@ class CreateSellerProductsTable extends Migration
             $table->text('seller_product_description')->nullable();
             $table->integer('seller_product_price')->default(0);
             $table->text('seller_product_condition')->nullable();
-            $table->string('seller_product_latitude')->nullable();
-            $table->string('seller_product_longitude')->nullable();
+            $table->text('seller_product_location')->nullable();
             $table->integer('seller_product_shipping_charges')->default(0);
             $table->integer('seller_product_status')->comment('0 : processing/pendding, 1 : approve, 2 : disapproved')->default(0);
             $table->timestamps();

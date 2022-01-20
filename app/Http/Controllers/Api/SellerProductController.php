@@ -64,11 +64,7 @@ class SellerProductController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="seller_product_latitude",
-     *     type="string"
-     *     ),
-     * @OA\Property(
-     *     property="seller_product_longitude",
+     *     property="seller_product_location",
      *     type="string"
      *     ),
      * @OA\Property(
@@ -133,8 +129,7 @@ class SellerProductController extends Controller
             $data['seller_product_description'] = $input['seller_product_description'];
             $data['seller_product_price'] = $input['seller_product_price'];
             $data['seller_product_condition'] = $input['seller_product_condition'];
-            $data['seller_product_latitude'] = $input['seller_product_latitude'];
-            $data['seller_product_longitude'] = $input['seller_product_longitude'];
+            $data['seller_product_location'] = $input['seller_product_location'];
             $data['seller_product_shipping_charges'] = $input['seller_product_shipping_charges'];
 
             if($request->hasfile('seller_product_images'))
@@ -248,8 +243,7 @@ class SellerProductController extends Controller
                     $product_data['seller_product_description'] = $data['seller_product_description'];
                     $product_data['seller_product_price'] = $data['seller_product_price'];
                     $product_data['seller_product_condition'] = $data['seller_product_condition'];
-                    $product_data['seller_product_latitude'] = $data['seller_product_latitude'];
-                    $product_data['seller_product_longitude'] = $data['seller_product_longitude'];
+                    $product_data['seller_product_location'] = $data['seller_product_location'];
                     $product_data['seller_product_shipping_charges'] = $data['seller_product_shipping_charges'];
                     $image_array_store = array();
                     foreach(explode(',',$data->seller_product_images) as $image_name)
@@ -285,8 +279,7 @@ class SellerProductController extends Controller
                     'seller_product_description' => 'required',
                     'seller_product_price' => 'required',
                     'seller_product_condition' => 'required',
-                    'seller_product_latitude' => 'required',
-                    'seller_product_longitude' => 'required',
+                    'seller_product_location' => 'required',
                     'seller_product_shipping_charges' => 'required',
                 ];
                 break;
