@@ -432,7 +432,7 @@ class CommonController extends Controller
                 $image_array_store = array();
                 foreach(explode(',',$sellerProduct->seller_product_images) as $image_name)
                 {
-                    array_push($image_array_store, asset("public/upload/buyer_product_images/".$image_name));
+                    array_push($image_array_store, asset("public/upload/seller_product_images/".$image_name));
                 }
     
                 $data['seller_product_id'] = $sellerProduct->id;
