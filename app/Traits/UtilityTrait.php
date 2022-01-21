@@ -234,12 +234,6 @@ trait UtilityTrait
     { 
         $str_result = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz'; 
         return substr(str_shuffle($str_result), 0, $length_of_string); 
-    } 
-
-    public function organizationSignInCheck()
-    {
-        $organizationSignInCheck = User::select('id','organization_login_id')->where('id',Auth::user()->id)->where('organization_login_id','!=',0)->first();
-        return $organizationSignInCheck;
     }
 
     public function sendSingle($registration_ids, $message)

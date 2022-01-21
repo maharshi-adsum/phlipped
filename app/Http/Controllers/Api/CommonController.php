@@ -335,7 +335,8 @@ class CommonController extends Controller
             }
             else
             {
-                return $this->sendBadRequest('Product Not Found');
+                // return $this->sendBadRequest('Product Not Found');
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
@@ -448,7 +449,8 @@ class CommonController extends Controller
             }
             else
             {
-                return $this->sendBadRequest('Product Not Found');
+                // return $this->sendBadRequest('Product Not Found');
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
