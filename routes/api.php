@@ -22,6 +22,7 @@ Route::namespace('Api')->group(
         Route::get('swagger', 'SwaggerController@listItem');
         Route::post('login', 'AuthController@login');
         Route::post('signup', 'AuthController@signUp');
+        Route::post('uniqueValidation', 'AuthController@uniqueValidation');
 
         //password
         Route::post('forgetpassword', 'AuthController@forgetPassword');
@@ -55,6 +56,7 @@ Route::namespace('Api')->group(
 
                 //approved seller product
                 Route::post('approvedSellerAllProductList','CommonController@approvedSellerAllProductList');
+                Route::post('sellerAllProductList','CommonController@sellerAllProductList');
                 Route::post('approvedSellerOneProductList','CommonController@approvedSellerOneProductList');
             }
         );

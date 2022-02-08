@@ -166,6 +166,80 @@ class AuthController extends Controller
     }
 
     /**
+     * Swagger definition for unique validation
+     *
+     * @OA\Post(
+     *     tags={"Authentication"},
+     *     path="/uniqueValidation",
+     *     description="User Unique Validation",
+     *     summary="User Unique Validation",
+     *     operationId="User Unique Validation",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="email",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="phone_number",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(response=200,description="Response",
+     * @OA\JsonContent(@OA\Property(property="token",type="string"))
+     *     ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error"
+     *     ,@OA\JsonContent(ref="#/components/schemas/ErrorResponse")
+     *     ),
+     * )
+     */
+    public function uniqueValidation(Request $request)
+    {
+        try{
+            $input = $this->objectToArray($request->input());
+            
+            $requiredParams = $this->requiredRequestParams('uniqueValidation');
+            $validator = Validator::make($input, $requiredParams);
+            if ($validator->fails()) {
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+            }
+            return response()->json(['status' => "true", 'data' => "", 'messages' => 'validate successfully.']);
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
+    /**
      * Swagger definition for login
      *
      * @OA\Post(
@@ -654,6 +728,12 @@ class AuthController extends Controller
     public function requiredRequestParams(string $action)
     {
         switch ($action) {
+            case 'uniqueValidation':
+                $params = [
+                    'email' => 'required|email|unique:users',
+                    'phone_number' => 'required|numeric|unique:users',
+                ];
+                break;
             case 'signup':
                 $params = [
                     'fullname' => 'required|min:3',

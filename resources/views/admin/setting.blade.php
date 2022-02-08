@@ -2,6 +2,19 @@
 @section("breadcrumb")
 <li class="breadcrumb-item active">Users</li>
 @endsection
+@section("extra_css")
+<style>
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input[type=number] {
+        -moz-appearance: textfield;
+    }
+</style>
+@endsection
 @section('content')
 <div class="row">
     <div class="col-md-6">
@@ -52,6 +65,17 @@
                         <div class="form-group ml-3">
                             <img src="@if($profile){{$profile->profile_image}}@else{{asset('public/phlippedlogo.png')}}@endif" class="img-thumbnail image_preview"
                                 id="image_preview" style="width: 145px; height: 145px;">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">
+                            Days
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" name="day" class="form-control" value="@if($profile){{$profile->day}}@endif" placeholder="Enter Days">
+                            </div>
                         </div>
                     </div>
                     <hr>
