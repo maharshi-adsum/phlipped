@@ -375,10 +375,6 @@ class CommonController extends Controller
      *     property="user_id",
      *     type="string"
      *     ),
-     * @OA\Property(
-     *     property="buyer_product_id",
-     *     type="string"
-     *     ),
      *    )
      *   ),
      *  ),
@@ -412,19 +408,12 @@ class CommonController extends Controller
         try{
             $input = $request->all();
 
-            $requiredParams = $this->requiredRequestParams('common_validation');
-            $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
-            {
-                return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
-            }
-
             if($input['user_id'] != Auth::user()->id)
             {
                 return $this->sendBadRequest('Unauthorized access');
             }
             $admin = Admin::first();
-            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1);
+            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('seller_product_status',1);
             $sellerProductCount = $sellerProduct->count();
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
