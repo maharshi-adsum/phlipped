@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use App\Models\SellerProducts;
 use App\Models\BuyerProducts;
 use Auth;
+use ImageResize;
+use App\Image;
 
 class SellerProductController extends Controller
 {
@@ -138,6 +140,12 @@ class SellerProductController extends Controller
                 {
                     $image_name = $file->getClientOriginalName();
                     $image_name = 'seller_product_images_' . rand(111111,999999) . '_' . time(). '.' . $file->getClientOriginalExtension();
+
+                    $img = ImageResize::make($file->path());
+                    $img->resize(150, 100, function ($constraint) {
+                        $constraint->aspectRatio();
+                    })->save(public_path('upload/seller_thumbnail').'/'.$image_name);
+
                     $file->move(public_path('upload/seller_product_images'), $image_name);
                     $dataImage[] = $image_name;
                 }
@@ -248,7 +256,7 @@ class SellerProductController extends Controller
                     $image_array_store = array();
                     foreach(explode(',',$data->seller_product_images) as $image_name)
                     {
-                        array_push($image_array_store, asset("public/upload/seller_product_images/".$image_name));
+                        array_push($image_array_store, asset("public/upload/seller_thumbnail/".$image_name));
                     }
                     $product_data['seller_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);

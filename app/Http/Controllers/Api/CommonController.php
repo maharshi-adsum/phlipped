@@ -115,7 +115,7 @@ class CommonController extends Controller
                 if($data['buyer_product_images'])
                 {
                     $image_name = explode(',',$data['buyer_product_images']);
-                    $product_data['buyer_product_images'] = asset("public/upload/buyer_product_images/".$image_name[0]);
+                    $product_data['buyer_product_images'] = asset("public/upload/buyer_thumbnail/".$image_name[0]);
                 }
                 array_push($product_array, $product_data);
             }
@@ -323,7 +323,7 @@ class CommonController extends Controller
                     $seller_image = "";
                     if($image_name = explode(',',$sellerData->seller_product_images))
                     {
-                        $seller_image = asset("public/upload/seller_product_images/".$image_name[0]);
+                        $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
                     }
         
                     $data['seller_product_id'] = $sellerData->id;
@@ -436,7 +436,7 @@ class CommonController extends Controller
                     $seller_image = "";
                     if($image_name = explode(',',$sellerData->seller_product_images))
                     {
-                        $seller_image = asset("public/upload/seller_product_images/".$image_name[0]);
+                        $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
                     }
         
                     $data['seller_product_id'] = $sellerData->id;
