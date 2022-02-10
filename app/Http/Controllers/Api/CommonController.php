@@ -312,7 +312,7 @@ class CommonController extends Controller
             $admin = Admin::first();
             $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1);
             
-            $sellerProductCount = $sellerProduct->count();
+            // $sellerProductCount = $sellerProduct->count();
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
             {
@@ -334,6 +334,7 @@ class CommonController extends Controller
                     array_push($seller_approve_data, $data);
                 }
                 }
+                $sellerProductCount = count($seller_approve_data);
     
                 return response()->json(['status' => "true",'data' => ['seller_product_count' => $sellerProductCount, 'seller_product_data' => $seller_approve_data] , 'messages' => array('Seller product list found')]);
             }
@@ -532,7 +533,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
+            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('seller_product_id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
 
             if($sellerProduct)
             {
