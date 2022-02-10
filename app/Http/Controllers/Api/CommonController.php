@@ -533,7 +533,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('seller_product_id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
+            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
 
             if($sellerProduct)
             {
