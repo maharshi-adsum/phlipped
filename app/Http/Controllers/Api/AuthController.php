@@ -231,7 +231,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
-            return response()->json(['status' => "true", 'data' => "", 'messages' => 'validate successfully.']);
+            return response()->json(['status' => "true", 'data' => "", 'messages' => array('validate successfully.')]);
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
         } catch (RequestException $e) {
