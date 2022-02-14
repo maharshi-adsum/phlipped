@@ -383,7 +383,7 @@
                 dataType: 'JSON',
                 success: function (data) {
                     swal({
-                        title: "Deleted!",
+                        title: "Approved!",
                         text: "Product has been approved.",
                         type: "success"
                     }, function () {
@@ -422,7 +422,7 @@
                 dataType: 'JSON',
                 success: function (data) {
                     swal({
-                        title: "Deleted!",
+                        title: "Disapproved!",
                         text: "Product has been disapproved.",
                         type: "success"
                     }, function () {
