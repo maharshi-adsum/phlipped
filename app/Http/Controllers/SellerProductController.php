@@ -75,7 +75,7 @@ class SellerProductController extends Controller
                 })
                 ->addColumn('product_view', function($row){
      
-                    $btn = '<a href="javascript:void(0)" class="view btn btn-success btn-sm" data-id="'. $row->id .'"><span class="fa fa-eye"></span></a>';
+                    $btn = '<a href="'.route('sellerProductView').'/'.$row->id.'" class="btn btn-success btn-sm"><span class="fa fa-eye"></span></a>';
                     return $btn;
                 })
                 ->filter(function ($instance) use ($request) {
@@ -106,7 +106,23 @@ class SellerProductController extends Controller
     public function sellerProductView(Request $request)
     {
         $id = $request->id;
-        $data = SellerProducts::find($id);
+        $data = SellerProducts::with('buyerProduct')->where('id',$id)->first();
+        $data['buyer_product_images'] = [];
+        $buyer_image_data = array();
+        if($data->buyerProduct->buyer_product_images)
+        {
+            foreach(explode(',',$data->buyerProduct->buyer_product_images) as $buyer_image_name)
+            {
+                $buyer_image = asset("public/upload/buyer_product_images/".$buyer_image_name);
+                array_push($buyer_image_data,$buyer_image);
+            }
+        } else{
+            $buyer_image = asset("public/assets/images/no-image.png");
+            array_push($buyer_image_data,$buyer_image);
+        }
+        $data['buyer_product_images'] = $buyer_image_data;
+
+
         $image_data = array();
         if($data->seller_product_images)
         {
@@ -115,9 +131,13 @@ class SellerProductController extends Controller
                 $image = asset("public/upload/seller_product_images/".$image_name);
                 array_push($image_data,$image);
             }
+        } else{
+            $image = asset("public/assets/images/no-image.png");
+            array_push($image_data,$image);
         }
         $data['seller_product_images'] = $image_data;
-        return response()->json($data);
+        
+        return view('admin.sellerProduct.sellerview',compact('data'));
     }
 
     public function sellerproductApproveDisapprove(Request $request)

@@ -56,7 +56,7 @@ Route::group(['middleware' => 'adminAuth'], function ()
 
     Route::group(['prefix' => '/manage_seller_product'], function(){
         Route::get('sellerProductIndex','SellerProductController@sellerProductIndex')->name('sellerProductIndex');
-        Route::get('sellerProductView','SellerProductController@sellerProductView')->name('sellerProductView');
+        Route::get('sellerProductView/{id?}','SellerProductController@sellerProductView')->name('sellerProductView');
         Route::post('sellerproductApproveDisapprove','SellerProductController@sellerproductApproveDisapprove')->name('sellerproductApproveDisapprove');
         Route::post('sellerProductPendingList','SellerProductController@sellerProductPendingList')->name('sellerProductPendingList');
     });

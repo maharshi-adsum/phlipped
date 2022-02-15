@@ -2,6 +2,23 @@
 @section("breadcrumb")
 <li class="breadcrumb-item active">Buyer Product</li>
 @endsection
+@section('extra_css')
+<style>
+.slider .owl-nav button.owl-prev, .slider .owl-nav button.owl-next{
+    height: 35px !important;
+    width: 35px !important;
+    font-size: 30px !important;
+    line-height: 30px !important;
+}
+
+#buyer_product_description{
+    height: 250px;
+    overflow: auto;
+    border: 1px solid #d8d6d9;
+    padding: 5px;
+}
+</style>
+@endsection
 @section('content')
 <div class="row">
     <div class="col-md-12">
@@ -25,13 +42,19 @@
                     <div class="col-md-5">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending (<span id="pending_count">{{$pending_count}}</span>)</a>
+                                <a class="nav-link active" id="pending-tab" data-toggle="tab" href="#pending" role="tab"
+                                    aria-controls="pending" aria-selected="true">Pending (<span
+                                        id="pending_count">{{$pending_count}}</span>)</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="approved-tab" data-toggle="tab" href="#approved" role="tab" aria-controls="approved" aria-selected="false">Approved (<span id="approved_count">{{$approved_count}}</span>)</a>
+                                <a class="nav-link" id="approved-tab" data-toggle="tab" href="#approved" role="tab"
+                                    aria-controls="approved" aria-selected="false">Approved (<span
+                                        id="approved_count">{{$approved_count}}</span>)</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="disapproved-tab" data-toggle="tab" href="#disapproved" role="tab" aria-controls="disapproved" aria-selected="false">Disapproved (<span id="disapproved_count">{{$disapproved_count}}</span>)</a>
+                                <a class="nav-link" id="disapproved-tab" data-toggle="tab" href="#disapproved"
+                                    role="tab" aria-controls="disapproved" aria-selected="false">Disapproved (<span
+                                        id="disapproved_count">{{$disapproved_count}}</span>)</a>
                             </li>
                         </ul>
                     </div>
@@ -105,21 +128,27 @@
                 </button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <div style="text-align: center;" class="owl-carousel owl-theme slider" id="buyer_product_images">
-                        
-                    </div>
-                    <hr>
-                    <div class="form-group">
-                        <span id="buyer_product_description"></span>
-                    </div>
+                <div class="col-sm-12">
+                    <div class="row">
+                        <div class="col-sm-6">
+                         <span>Product Image :</span>
+                            <div style="text-align: center;" class="owl-carousel owl-theme slider"
+                                id="buyer_product_images">
+
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                        <span>Product Description :</span>
+                            <p id="buyer_product_description"></p>
+                        </div>
                 </div>
             </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
+        </div>
+        <div class="modal-footer justify-content-between">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>
+</div>
 </div>
 @endsection
 
@@ -131,6 +160,7 @@
         nav: true,
         items: 1,
     });
+
 </script>
 <script type="text/javascript">
 
@@ -322,9 +352,11 @@
                 $('#buyer_product_name').html(data.buyer_product_name);
                 $('#buyer_product_description').html(data.buyer_product_description);
                 $('#buyer_product_images').empty();
-                var html = '<div style="text-align: center;" class="owl-carousel owl-theme slider">';
+                var html =
+                    '<div style="text-align: center;" class="owl-carousel owl-theme slider">';
                 $.each(data.buyer_product_images, function (key, val) {
-                    html += '<img src="'+ val +'" class="img-thumbnail w-100" style="height: 600px">'
+                    html += '<img src="' + val +
+                        '" class="img-thumbnail w-100" style="height: 250px">'
                 });
                 html += '</div>';
                 $('#buyer_product_images').append(html);

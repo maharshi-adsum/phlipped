@@ -238,7 +238,7 @@
                             </a>
                         </li>
 
-                        @if(Request::is('manage_seller_product/sellerProductIndex'))
+                        @if(Request::is('manage_seller_product/sellerProductIndex')||Request::is('manage_seller_product/sellerProductView*'))
                         @php($class="menu-open")
                         @php($active="active1")
                         @else

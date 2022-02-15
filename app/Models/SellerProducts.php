@@ -20,4 +20,9 @@ class SellerProducts extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
+
+    public function buyerProduct()
+    {
+        return $this->hasOne('App\Models\BuyerProducts','id','buyer_product_id');
+    }
 }

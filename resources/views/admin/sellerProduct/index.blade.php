@@ -25,13 +25,19 @@
                     <div class="col-md-5">
                         <ul class="nav nav-tabs" id="myTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link active" id="pending-tab" data-toggle="tab" href="#pending" role="tab" aria-controls="pending" aria-selected="true">Pending (<span id="pending_count">{{$pending_count}}</span>)</a>
+                                <a class="nav-link active" id="pending-tab" data-toggle="tab" href="#pending" role="tab"
+                                    aria-controls="pending" aria-selected="true">Pending (<span
+                                        id="pending_count">{{$pending_count}}</span>)</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="approved-tab" data-toggle="tab" href="#approved" role="tab" aria-controls="approved" aria-selected="false">Approved (<span id="approved_count">{{$approved_count}}</span>)</a>
+                                <a class="nav-link" id="approved-tab" data-toggle="tab" href="#approved" role="tab"
+                                    aria-controls="approved" aria-selected="false">Approved (<span
+                                        id="approved_count">{{$approved_count}}</span>)</a>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <a class="nav-link" id="disapproved-tab" data-toggle="tab" href="#disapproved" role="tab" aria-controls="disapproved" aria-selected="false">Disapproved (<span id="disapproved_count">{{$disapproved_count}}</span>)</a>
+                                <a class="nav-link" id="disapproved-tab" data-toggle="tab" href="#disapproved"
+                                    role="tab" aria-controls="disapproved" aria-selected="false">Disapproved (<span
+                                        id="disapproved_count">{{$disapproved_count}}</span>)</a>
                             </li>
                         </ul>
                     </div>
@@ -97,33 +103,6 @@
     </div>
 </div>
 
-<div class="modal fade" id="viewModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="seller_product_name">Product View</h3>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <div style="text-align: center;" class="owl-carousel owl-theme slider" id="seller_product_images">
-                        
-                    </div>
-                    <hr>
-                    <div class="form-group">
-                        <span id="seller_product_description"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer justify-content-between">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @section('script')
@@ -134,6 +113,7 @@
         nav: true,
         items: 1,
     });
+
 </script>
 <script type="text/javascript">
 
@@ -324,37 +304,6 @@
         $('#datatable_seller_product_disapproved').DataTable().draw(true);
     });
 
-    $(document).on("click", ".view", function () {
-        var id = $(this).attr('data-id');
-        $.ajax({
-            url: "{{route('sellerProductView')}}",
-            type: "GET",
-            data: {
-                id: id
-            },
-            dataType: 'JSON',
-            success: function (data) {
-                $('#seller_product_name').html(data.seller_product_name);
-                $('#seller_product_description').html(data.seller_product_description);
-                $('#seller_product_images').empty();
-                var html = '<div style="text-align: center;" class="owl-carousel owl-theme slider">';
-                $.each(data.seller_product_images, function (key, val) {
-                    html += '<img src="'+ val +'" class="img-thumbnail w-100" style="height: 600px">'
-                });
-                html += '</div>';
-                $('#seller_product_images').append(html);
-                $(".owl-carousel").owlCarousel({
-                    loop: true,
-                    nav: true,
-                    items: 1,
-                    margin:10,
-                    autoHeight:true
-                });
-                $('#viewModal').modal("show");
-            }
-        });
-    });
-
     $(document).on('click', '.approve', function () {
         var id = $(this).attr('data-id');
         var status = 1;
@@ -433,7 +382,7 @@
         });
     });
 
-    function count(data)
+    function count(data) 
     {
         document.getElementById("pending_count").innerHTML = data.pending_count;
         document.getElementById("approved_count").innerHTML = data.approved_count;

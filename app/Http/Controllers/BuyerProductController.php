@@ -104,9 +104,12 @@ class BuyerProductController extends Controller
         {
             foreach(explode(',',$data->buyer_product_images) as $image_name)
             {
-                $image = asset("public/upload/buyer_product_images/".$image_name);
+                $image = asset("public/upload/buyer_thumbnail/".$image_name);
                 array_push($image_data,$image);
             }
+        }else {
+            $image = asset("public/assets/images/no-image.png");
+            array_push($image_data,$image);
         }
         $data['buyer_product_images'] = $image_data;
         return response()->json($data);
