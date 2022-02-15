@@ -8,8 +8,10 @@ use App\Traits\UtilityTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\BuyerProducts;
+use App\Models\Admin;
 use Auth;
 use ImageResize;
+use Carbon\Carbon;
 use App\Image;
 
 class BuyerProductController extends Controller
@@ -207,23 +209,38 @@ class BuyerProductController extends Controller
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $buyerProductGet = BuyerProducts::with('sellerProduct')->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+            $buyerProductGet = BuyerProducts::with(['sellerProduct' =>function($q){
+            $q->where('seller_product_status',1);
+     }])->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->where('buyer_product_status',1)->get();
+            
             if(!$buyerProductGet->isEmpty())
             {
                 $product_array = array();
+                $sellerProductArray = [];
+                $admin = Admin::first();
                 foreach($buyerProductGet as $data)
                 {
+
+                    foreach($data->sellerProduct as $sellerProduct){
+                         if($sellerProduct->created_at->addDays($admin->day)->toDateTimeString() >= Carbon::now()){
+                            $sellerProductArray[] = $sellerProduct;
+                            $sellerProductPrice[] = $sellerProduct->seller_product_price;
+                         }
+                    }
+                    
                     $product_data['buyer_product_id'] = $data['id'];
                     $product_data['buyer_product_name'] = $data['buyer_product_name'];
                     $product_data['buyer_product_description'] = $data['buyer_product_description'];
                     $product_data['buyer_product_status'] = $data['buyer_product_status'];
-                    $product_data['highest_price'] = $data->sellerProduct->pluck('seller_product_price')->max() ? $data->sellerProduct->pluck('seller_product_price')->max() : 0;
-                    $product_data['lowest_price'] = $data->sellerProduct->pluck('seller_product_price')->min() ? $data->sellerProduct->pluck('seller_product_price')->min() : 0;
+                    $product_data['highest_price'] = isset($sellerProductPrice) ? max($sellerProductPrice) : 0;
+                    $product_data['lowest_price'] = isset($sellerProductPrice) ? min($sellerProductPrice) : 0;
                     $image_array_store = array();
+                    if($data->buyer_product_images){
                     foreach(explode(',',$data->buyer_product_images) as $image_name)
                     {
                         array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
                     }
+                }
                     $product_data['buyer_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);
                 }
