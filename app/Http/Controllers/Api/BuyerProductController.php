@@ -220,12 +220,18 @@ class BuyerProductController extends Controller
                 $admin = Admin::first();
                 foreach($buyerProductGet as $data)
                 {
-
-                    foreach($data->sellerProduct as $sellerProduct){
-                         if($sellerProduct->created_at->addDays($admin->day)->toDateTimeString() >= Carbon::now()){
-                            $sellerProductArray[] = $sellerProduct;
-                            $sellerProductPrice[] = $sellerProduct->seller_product_price;
-                         }
+                    $sellerProductPrice = array();
+                    if(!$data->sellerProduct->isEmpty())
+                    {
+                        foreach($data->sellerProduct as $sellerProduct){
+                            if($sellerProduct->created_at->addDays($admin->day)->toDateTimeString() >= Carbon::now()){
+                                array_push($sellerProductPrice, $sellerProduct->seller_product_price);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        array_push($sellerProductPrice, 0);
                     }
                     
                     $product_data['buyer_product_id'] = $data['id'];
@@ -236,11 +242,11 @@ class BuyerProductController extends Controller
                     $product_data['lowest_price'] = isset($sellerProductPrice) ? min($sellerProductPrice) : 0;
                     $image_array_store = array();
                     if($data->buyer_product_images){
-                    foreach(explode(',',$data->buyer_product_images) as $image_name)
-                    {
-                        array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
+                        foreach(explode(',',$data->buyer_product_images) as $image_name)
+                        {
+                            array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
+                        }
                     }
-                }
                     $product_data['buyer_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);
                 }
