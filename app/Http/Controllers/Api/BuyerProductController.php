@@ -211,7 +211,7 @@ class BuyerProductController extends Controller
 
             $buyerProductGet = BuyerProducts::with(['sellerProduct' =>function($q){
             $q->where('seller_product_status',1);
-     }])->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->where('buyer_product_status',1)->get();
+     }])->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
             
             if(!$buyerProductGet->isEmpty())
             {
