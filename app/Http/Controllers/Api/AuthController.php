@@ -261,15 +261,18 @@ class AuthController extends Controller
      * @OA\JsonContent(
      * @OA\Property(
      *     property="country_code",
-     *     type="string"
+     *     type="string",
+     *     example="+1"
      *     ),
      * @OA\Property(
      *     property="phone_number",
-     *     type="string"
+     *     type="string",
+     *     example="8866483429"
      *     ),
      * @OA\Property(
      *     property="password",
-     *     type="string"
+     *     type="string",
+     *     example="00000000"
      *     ),
      * @OA\Property(
      *     property="device_token",

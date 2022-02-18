@@ -208,25 +208,23 @@ class BuyerProductController extends Controller
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array('Unauthorized access')]);
             }
+            $admin = Admin::first();
 
-            $buyerProductGet = BuyerProducts::with(['sellerProduct' =>function($q){
-            $q->where('seller_product_status',1);
-     }])->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
-            
+            $buyerProductGet = BuyerProducts::with(['sellerProduct' =>function($q)use($admin){
+                                        $q->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+                                }])->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+
             if(!$buyerProductGet->isEmpty())
             {
                 $product_array = array();
-                $sellerProductArray = [];
-                $admin = Admin::first();
                 foreach($buyerProductGet as $data)
                 {
                     $sellerProductPrice = array();
                     if(!$data->sellerProduct->isEmpty())
                     {
-                        foreach($data->sellerProduct as $sellerProduct){
-                            if($sellerProduct->created_at->addDays($admin->day)->toDateTimeString() >= Carbon::now()){
-                                array_push($sellerProductPrice, $sellerProduct->seller_product_price);
-                            }
+                        foreach($data->sellerProduct as $sellerProduct)
+                        {
+                            array_push($sellerProductPrice, $sellerProduct->seller_product_price);
                         }
                     }
                     else
@@ -241,13 +239,14 @@ class BuyerProductController extends Controller
                     $product_data['highest_price'] = isset($sellerProductPrice) ? max($sellerProductPrice) : 0;
                     $product_data['lowest_price'] = isset($sellerProductPrice) ? min($sellerProductPrice) : 0;
                     $image_array_store = array();
-                    if($data->buyer_product_images){
+                    if($data->buyer_product_images)
+                    {
                         foreach(explode(',',$data->buyer_product_images) as $image_name)
                         {
                             array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
                         }
                     }
-                    $product_data['buyer_product_images'] = $image_array_store;
+                    $product_data['buyer_product_images'] = $image_array_store; 
                     array_push($product_array, $product_data);
                 }
                 return response()->json(['status' => "true", 'data' => $product_array, 'messages' => array('Buyer product list found')]);

@@ -79,7 +79,8 @@ class LoginController extends Controller
             {
                 $profile->username = $request->username;
                 $profile->email = $request->email;
-                $profile->day = $request->day;
+                $profile->buyer_days = $request->buyer_days;
+                $profile->seller_days = $request->seller_days;
                 if($request->password)
                 {
                     $profile->password = Hash::make($request->password);

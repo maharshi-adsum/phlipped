@@ -70,11 +70,22 @@
                     <hr>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">
-                            Days
+                            Buyer Days
                         </label>
                         <div class="col-sm-9">
                             <div class="input-group">
-                                <input type="number" name="day" class="form-control" value="@if($profile){{$profile->day}}@endif" placeholder="Enter Days">
+                                <input type="number" name="buyer_days" class="form-control" value="@if($profile){{$profile->buyer_days}}@endif" placeholder="Enter Buyer Days">
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">
+                            Seller Days
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" name="seller_days" class="form-control" value="@if($profile){{$profile->seller_days}}@endif" placeholder="Enter Seller Days">
                             </div>
                         </div>
                     </div>

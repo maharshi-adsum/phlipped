@@ -18,7 +18,8 @@ class AdminSeeder extends Seeder
             'phone_number' => '0123456789',
             'email' => 'admin@admin.com',
             'password' => Hash::make('admin123'),
-            'day' => '0',
+            'buyer_days' => '0',
+            'seller_days' => '0',
         ]);
     }
 }

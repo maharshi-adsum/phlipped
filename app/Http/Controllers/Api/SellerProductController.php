@@ -125,6 +125,12 @@ class SellerProductController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
             }
 
+            $sellerProducts = SellerProducts::where('user_id',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->first();
+            if($sellerProducts)
+            {
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('You have already posted for sale')]);
+            }
+
             $data['user_id'] = $input['user_id'];
             $data['buyer_product_id'] = $input['buyer_product_id'];
             $data['seller_product_name'] = $input['seller_product_name'];
