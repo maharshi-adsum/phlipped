@@ -23,6 +23,6 @@ class SellerProducts extends Model
 
     public function buyerProduct()
     {
-        return $this->hasOne('App\Models\BuyerProducts','id','buyer_product_id');
+        return $this->hasOne('App\Models\BuyerProducts','id','buyer_product_id')->where('is_active',1);
     }
 }

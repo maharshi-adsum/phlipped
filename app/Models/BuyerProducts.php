@@ -23,6 +23,6 @@ class BuyerProducts extends Model
 
     public function sellerProduct()
     {
-        return $this->hasMany('App\Models\SellerProducts','buyer_product_id','id');
+        return $this->hasMany('App\Models\SellerProducts','buyer_product_id','id')->where('is_active',1);
     }
 }
