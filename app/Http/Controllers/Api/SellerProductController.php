@@ -259,6 +259,7 @@ class SellerProductController extends Controller
                     $product_data['seller_product_condition'] = $data['seller_product_condition'];
                     $product_data['seller_product_location'] = $data['seller_product_location'];
                     $product_data['seller_product_shipping_charges'] = $data['seller_product_shipping_charges'];
+                    $product_data['seller_product_status'] = $data['seller_product_status'];
                     $image_array_store = array();
                     foreach(explode(',',$data->seller_product_images) as $image_name)
                     {
@@ -271,7 +272,7 @@ class SellerProductController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
