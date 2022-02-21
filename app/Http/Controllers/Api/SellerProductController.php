@@ -252,6 +252,7 @@ class SellerProductController extends Controller
                 foreach($sellerProductGet as $data)
                 {
                     $product_data['user_id'] = $data['user_id'];
+                    $product_data['seller_product_id'] = $data['id'];
                     $product_data['buyer_product_id'] = $data['buyer_product_id'];
                     $product_data['seller_product_name'] = $data['seller_product_name'];
                     $product_data['seller_product_description'] = $data['seller_product_description'];
