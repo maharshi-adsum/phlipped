@@ -119,13 +119,13 @@ class SellerProductController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->first();
+            $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_active',1)->first();
             if(!$checkProduct)
             {
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
             }
 
-            $sellerProducts = SellerProducts::where('user_id',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->first();
+            $sellerProducts = SellerProducts::where('user_id',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('is_active',1)->first();
             if($sellerProducts)
             {
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('You have already posted for sale')]);
@@ -245,7 +245,7 @@ class SellerProductController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->where('is_active',1)->orderBy('id', 'DESC')->get();
             if(!$sellerProductGet->isEmpty())
             {
                 $product_array = array();

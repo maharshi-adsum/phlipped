@@ -17,10 +17,10 @@ class SellerProductController extends Controller
 
     public function sellerProductIndex()
     {
-        $product_all_count = SellerProducts::count();
-        $pending_count = SellerProducts::where('seller_product_status',0)->count();
-        $approved_count = SellerProducts::where('seller_product_status',1)->count();
-        $disapproved_count = SellerProducts::where('seller_product_status',2)->count();
+        $product_all_count = SellerProducts::where('is_active',1)->count();
+        $pending_count = SellerProducts::where('is_active',1)->where('seller_product_status',0)->count();
+        $approved_count = SellerProducts::where('is_active',1)->where('seller_product_status',1)->count();
+        $disapproved_count = SellerProducts::where('is_active',1)->where('seller_product_status',2)->count();
         return view('admin.sellerProduct.index',compact('product_all_count','pending_count','approved_count','disapproved_count'));
     }
 
@@ -32,6 +32,7 @@ class SellerProductController extends Controller
             ->leftJoin('buyer_products','seller_products.buyer_product_id','buyer_products.id')
             ->leftJoin('users as B','buyer_products.user_id','B.id') 
             ->where('seller_product_status',$request->status)
+            ->where('is_active',1)
             ->get();
 
             return Datatables::of($data)
@@ -106,7 +107,7 @@ class SellerProductController extends Controller
     public function sellerProductView(Request $request)
     {
         $id = $request->id;
-        $data = SellerProducts::with('buyerProduct')->where('id',$id)->first();
+        $data = SellerProducts::with('buyerProduct')->where('is_active',1)->where('id',$id)->first();
         $data['buyer_product_images'] = [];
         $buyer_image_data = array();
         if($data->buyerProduct->buyer_product_images)
@@ -142,16 +143,16 @@ class SellerProductController extends Controller
 
     public function sellerproductApproveDisapprove(Request $request)
     {
-        $data = SellerProducts::find($request->id);
+        $data = SellerProducts::where('is_active',1)->find($request->id);
         if($data)
         {
             $data->seller_product_status = $request->status;
             $data->save();
         }
 
-        $pending_count = SellerProducts::where('seller_product_status',0)->count();
-        $approved_count = SellerProducts::where('seller_product_status',1)->count();
-        $disapproved_count = SellerProducts::where('seller_product_status',2)->count();
+        $pending_count = SellerProducts::where('is_active',1)->where('seller_product_status',0)->count();
+        $approved_count = SellerProducts::where('is_active',1)->where('seller_product_status',1)->count();
+        $disapproved_count = SellerProducts::where('is_active',1)->where('seller_product_status',2)->count();
         $data = ['pending_count' => $pending_count, 'approved_count' => $approved_count,'disapproved_count' => $disapproved_count];
         return response()->json($data);
     }

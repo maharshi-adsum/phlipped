@@ -59,6 +59,10 @@ Route::namespace('Api')->group(
                 Route::post('sellerAllProductList','CommonController@sellerAllProductList');
                 Route::post('sellerOpenProductList','CommonController@sellerOpenProductList');
                 Route::post('approvedSellerOneProductList','CommonController@approvedSellerOneProductList');
+
+                //delete product list
+                Route::post('buyerProductDelete','CommonController@buyerProductDelete');
+                Route::post('sellerProductDelete','CommonController@sellerProductDelete');
             }
         );
     }

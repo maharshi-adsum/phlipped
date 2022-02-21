@@ -212,7 +212,7 @@ class BuyerProductController extends Controller
 
             $buyerProductGet = BuyerProducts::with(['sellerProduct' =>function($q)use($admin){
                                         $q->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
-                                }])->where('user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+                                }])->where('user_id',$input['user_id'])->where('is_active',1)->orderBy('id', 'DESC')->get();
 
             if(!$buyerProductGet->isEmpty())
             {

@@ -92,7 +92,7 @@ class CommonController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->orderBy('id', 'DESC');
+            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_active',1)->orderBy('id', 'DESC');
 
             $dataCount = $buyerProductGet->count();
 
@@ -205,7 +205,7 @@ class CommonController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $gotOnebuyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->first();
+            $gotOnebuyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_active',1)->first();
 
             if($gotOnebuyerProductGet)
             {
@@ -310,7 +310,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
             $admin = Admin::first();
-            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+            $sellerProduct = SellerProducts::where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -337,7 +337,6 @@ class CommonController extends Controller
             }
             else
             {
-                // return $this->sendBadRequest('Product Not Found');
                 return response()->json(['status' => "true", 'data' => "", 'messages' => array('Product Not Found')]);
             }
 
@@ -412,7 +411,7 @@ class CommonController extends Controller
             }
             $admin = Admin::first();
 
-            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+            $sellerProduct = SellerProducts::where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -519,7 +518,7 @@ class CommonController extends Controller
             $date1 = Carbon::now()->subDays($double_days)->toDateTimeString();
             $date2 = Carbon::now()->subDays($days)->toDateTimeString();
 
-            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2]);
+            $sellerProduct = SellerProducts::where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2]);
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -635,7 +634,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $sellerProduct = SellerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
+            $sellerProduct = SellerProducts::where('is_active',1)->where('user_id','!=',$input['user_id'])->where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
 
             if($sellerProduct)
             {
@@ -659,7 +658,92 @@ class CommonController extends Controller
             }
             else
             {
-                // return $this->sendBadRequest('Product Not Found');
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
+    /**
+     * Swagger defination buyer Product Delete
+     *
+     * @OA\Post(
+     *     tags={"Product Listing delete"},
+     *     path="/buyerProductDelete",
+     *     description="buyer Product Delete",
+     *     summary="buyer Product Delete",
+     *     operationId="buyerProductDelete",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="buyer_product_id",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function buyerProductDelete(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->first();
+            
+            if($buyerProduct)
+            {
+                $buyerProduct->is_active = 0;
+                $buyerProduct->save();
+                return response()->json(['status' => "true",'data' => "" , 'messages' => array('Product successfully delete')]);
+            }
+            else
+            {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
             }
 
@@ -670,6 +754,92 @@ class CommonController extends Controller
         }
     }
     
+    /**
+     * Swagger defination Seller Product Delete
+     *
+     * @OA\Post(
+     *     tags={"Product Listing delete"},
+     *     path="/sellerProductDelete",
+     *     description="Seller Product Delete",
+     *     summary="Seller Product Delete",
+     *     operationId="sellerProductDelete",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_id",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function sellerProductDelete(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->first();
+            
+            if($sellerProduct)
+            {
+                $sellerProduct->is_active = 0;
+                $sellerProduct->save();
+                return response()->json(['status' => "true",'data' => "" , 'messages' => array('Product successfully delete')]);
+            }
+            else
+            {
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {
