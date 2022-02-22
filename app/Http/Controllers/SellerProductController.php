@@ -31,8 +31,8 @@ class SellerProductController extends Controller
             ->leftJoin('users as S','seller_products.user_id','S.id')
             ->leftJoin('buyer_products','seller_products.buyer_product_id','buyer_products.id')
             ->leftJoin('users as B','buyer_products.user_id','B.id') 
-            ->where('seller_product_status',$request->status)
-            ->where('is_active',1)
+            ->where('seller_products.seller_product_status',$request->status)
+            ->where('seller_products.is_active',1)
             ->get();
 
             return Datatables::of($data)

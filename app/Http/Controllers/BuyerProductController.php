@@ -28,8 +28,8 @@ class BuyerProductController extends Controller
         try {
             $data = BuyerProducts::select('users.id','users.fullname','buyer_products.*')
             ->leftJoin('users','buyer_products.user_id','users.id')
-            ->where('buyer_product_status',$request->status)
-            ->where('is_active',1)
+            ->where('buyer_products.buyer_product_status',$request->status)
+            ->where('buyer_products.is_active',1)
             ->get();
 
             return Datatables::of($data)
