@@ -12,6 +12,7 @@ use App\Models\SellerProducts;
 use App\Models\Admin;
 use Auth;
 use Carbon\Carbon;
+use App\Models\Wishlist;
 
 class CommonController extends Controller
 {
@@ -843,15 +844,15 @@ class CommonController extends Controller
     }
 
     /**
-     * Swagger defination Add product in wishlist
+     * Swagger defination Add remove product in wishlist
      *
      * @OA\Post(
      *     tags={"Wishlist"},
-     *     path="/wishlistAddSellerProduct",
+     *     path="/wishlistAddRemoveSellerProduct",
      *     description="
-     *  Add product in wishlist",
-     *     summary="Add product in wishlist",
-     *     operationId="wishlistAddSellerProduct",
+     *  Add remove product in wishlist",
+     *     summary="Add remove product in wishlist",
+     *     operationId="wishlistAddRemoveSellerProduct",
      * @OA\Parameter(
      *     name="Content-Language",
      *     in="header",
@@ -903,9 +904,54 @@ class CommonController extends Controller
      * }
      * )
      */
-    public function wishlistAddSellerProduct()
+    public function wishlistAddRemoveSellerProduct(Request $request)
     {
+        try{
+            $input = $request->all();
 
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->first();
+            if($buyerProduct)
+            {
+                $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('is_active',1)->first();
+                if($sellerProduct)
+                {
+                    $wishlist = Wishlist::where('seller_product_id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->first();
+                    if($wishlist)
+                    {
+                        $wishlist->status = $wishlist->status ? 0 : 1;
+                        $wishlist->save();
+                        $message = $wishlist->status ? 'added' : 'remove';
+                    }
+                    else
+                    {
+                        $data['user_id'] = $input['user_id'];
+                        $data['buyer_product_id'] = $input['buyer_product_id'];
+                        $data['seller_product_id'] = $input['seller_product_id'];
+                        $wishlist = Wishlist::create($data);
+                        $message = 'added';
+                    }
+                    if($wishlist)
+                    {
+                        return response()->json(['status' => "true",'data' => $wishlist , 'messages' => array('Product '.$message.' to your wishlist')]);
+                    }
+                    else
+                    {
+                        return response()->json(['status' => "true",'data' => "", 'messages' => array('Something went wrong!')]);
+                    }
+                }
+            }
+            return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
     }
 
     public function requiredRequestParams(string $action, $id = '')
