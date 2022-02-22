@@ -70,6 +70,14 @@ class SellerProductController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
+     *     property="seller_product_latitude",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_longitude",
+     *     type="string"
+     *     ),
+     * @OA\Property(
      *     property="seller_product_shipping_charges",
      *     type="string"
      *     ),
@@ -138,6 +146,8 @@ class SellerProductController extends Controller
             $data['seller_product_price'] = $input['seller_product_price'];
             $data['seller_product_condition'] = $input['seller_product_condition'];
             $data['seller_product_location'] = $input['seller_product_location'];
+            $data['seller_product_latitude'] = $input['seller_product_latitude'];
+            $data['seller_product_longitude'] = $input['seller_product_longitude'];
             $data['seller_product_shipping_charges'] = $input['seller_product_shipping_charges'];
 
             if($request->hasfile('seller_product_images'))
@@ -259,6 +269,8 @@ class SellerProductController extends Controller
                     $product_data['seller_product_price'] = $data['seller_product_price'];
                     $product_data['seller_product_condition'] = $data['seller_product_condition'];
                     $product_data['seller_product_location'] = $data['seller_product_location'];
+                    $product_data['seller_product_latitude'] = $data['seller_product_latitude'] ? $data['seller_product_latitude'] : '';
+                    $product_data['seller_product_longitude'] = $data['seller_product_longitude'] ? $data['seller_product_longitude'] : '';
                     $product_data['seller_product_shipping_charges'] = $data['seller_product_shipping_charges'];
                     $product_data['seller_product_status'] = $data['seller_product_status'];
                     $image_array_store = array();

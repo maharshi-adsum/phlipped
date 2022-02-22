@@ -63,6 +63,9 @@ Route::namespace('Api')->group(
                 //delete product list
                 Route::post('buyerProductDelete','CommonController@buyerProductDelete');
                 Route::post('sellerProductDelete','CommonController@sellerProductDelete');
+
+                //wishlist
+                Route::post('wishlistAddSellerProduct','CommonController@wishlistAddSellerProduct');
             }
         );
     }

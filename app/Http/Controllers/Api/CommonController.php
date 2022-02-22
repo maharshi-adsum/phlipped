@@ -652,6 +652,8 @@ class CommonController extends Controller
                 $data['seller_product_price'] = $sellerProduct->seller_product_price;
                 $data['seller_product_condition'] = $sellerProduct->seller_product_condition;
                 $data['seller_product_location'] = $sellerProduct->seller_product_location;
+                $data['seller_product_latitude'] = $sellerProduct->seller_product_latitude ? $sellerProduct->seller_product_latitude : '';
+                $data['seller_product_longitude'] = $sellerProduct->seller_product_longitude ? $sellerProduct->seller_product_longitude : '';
                 $data['seller_product_shipping_charges'] = $sellerProduct->seller_product_shipping_charges;
     
                 return response()->json(['status' => "true",'data' => $data , 'messages' => array('Seller product found')]);
@@ -838,6 +840,72 @@ class CommonController extends Controller
         } catch (RequestException $e) {
             return $this->sendErrorResponse($e);
         }
+    }
+
+    /**
+     * Swagger defination Add product in wishlist
+     *
+     * @OA\Post(
+     *     tags={"Wishlist"},
+     *     path="/wishlistAddSellerProduct",
+     *     description="
+     *  Add product in wishlist",
+     *     summary="Add product in wishlist",
+     *     operationId="wishlistAddSellerProduct",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="buyer_product_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_id",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function wishlistAddSellerProduct()
+    {
+
     }
 
     public function requiredRequestParams(string $action, $id = '')
