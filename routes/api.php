@@ -66,6 +66,7 @@ Route::namespace('Api')->group(
 
                 //wishlist
                 Route::post('wishlistAddRemoveSellerProduct','CommonController@wishlistAddRemoveSellerProduct');
+                Route::post('getWishlistProduct','CommonController@getWishlistProduct');
             }
         );
     }

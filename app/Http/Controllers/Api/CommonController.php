@@ -954,6 +954,113 @@ class CommonController extends Controller
         }
     }
 
+    /**
+     * Swagger defination Get product in wishlist
+     *
+     * @OA\Post(
+     *     tags={"Wishlist"},
+     *     path="/getWishlistProduct",
+     *     description="
+     *  Get product in wishlist",
+     *     summary="Get product in wishlist",
+     *     operationId="getWishlistProduct",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function getWishlistProduct(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $wishlist = Wishlist::where('user_id',$input['user_id'])->where('status',1)->pluck('seller_product_id')->toArray();
+            if($wishlist)
+            {
+                $sellerProductGet = SellerProducts::whereIn('id',$wishlist)->where('is_active',1)->orderBy('id','desc')->get();
+                if(!$sellerProductGet->isEmpty())
+                {
+                    $seller_approve_data = array();
+                    foreach($sellerProductGet as $sellerData)
+                    {
+                        $seller_image = "";
+                        if($image_name = explode(',',$sellerData->seller_product_images))
+                        {
+                            $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
+                        }
+            
+                        $data['seller_product_id'] = $sellerData->id;
+                        $data['buyer_product_id'] = $sellerData->buyer_product_id;
+                        $data['seller_product_name'] = $sellerData->seller_product_name;
+                        $data['seller_product_price'] = $sellerData->seller_product_price;
+                        $data['seller_product_images'] = $seller_image;
+                        array_push($seller_approve_data, $data);
+                    }
+                    $sellerProductCount = count($seller_approve_data);
+        
+                    return response()->json(['status' => "true",'data' => ['wishlist_count' => $sellerProductCount, 'wishlist_data' => $seller_approve_data] , 'messages' => array('Your wishlist data found')]);
+                }
+                else
+                {
+                    return response()->json(['status' => "true", 'data' => "", 'messages' => array('Your wishlist is empty!')]);
+                }
+                
+            }
+            else
+            {
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Your wishlist is empty!')]);
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {
