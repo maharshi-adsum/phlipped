@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Auth;
 
 class SellerProducts extends Model
 {
@@ -24,5 +25,10 @@ class SellerProducts extends Model
     public function buyerProduct()
     {
         return $this->hasOne('App\Models\BuyerProducts','id','buyer_product_id')->where('is_active',1);
+    }
+
+    public function wishlist()
+    {
+        return $this->hasOne('App\Models\Wishlist','seller_product_id','id')->where('status',1)->where('user_id',Auth::user()->id);
     }
 }

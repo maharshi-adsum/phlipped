@@ -311,7 +311,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
             $admin = Admin::first();
-            $sellerProduct = SellerProducts::where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -330,6 +330,7 @@ class CommonController extends Controller
                     $data['seller_product_name'] = $sellerData->seller_product_name;
                     $data['seller_product_price'] = $sellerData->seller_product_price;
                     $data['seller_product_images'] = $seller_image;
+                    $data['wishlist_status'] = $sellerData->wishlist ? $sellerData->wishlist->status : 0;
                     array_push($seller_approve_data, $data);
                 }
                 $sellerProductCount = count($seller_approve_data);
