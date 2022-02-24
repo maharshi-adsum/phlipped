@@ -947,7 +947,7 @@ class CommonController extends Controller
                     }
                 }
             }
-            return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
+            return response()->json(['status' => "true", 'data' => "", 'messages' => array('Product Not Found')]);
 
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
