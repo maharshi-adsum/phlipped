@@ -1045,13 +1045,13 @@ class CommonController extends Controller
                 }
                 else
                 {
-                    return response()->json(['status' => "true", 'data' => "", 'messages' => array('Your wishlist is empty!')]);
+                    return response()->json(['status' => "true", 'data' => ['wishlist_count' => 0, 'wishlist_data' => ""], 'messages' => array('Your wishlist is empty!')]);
                 }
                 
             }
             else
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Your wishlist is empty!')]);
+                return response()->json(['status' => "true", 'data' => ['wishlist_count' => 0, 'wishlist_data' => ""], 'messages' => array('Your wishlist is empty!')]);
             }
 
         } catch (Exception $e) {
