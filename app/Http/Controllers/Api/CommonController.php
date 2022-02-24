@@ -520,7 +520,7 @@ class CommonController extends Controller
             $date1 = Carbon::now()->subDays($double_days)->toDateTimeString();
             $date2 = Carbon::now()->subDays($days)->toDateTimeString();
 
-            $sellerProduct = SellerProducts::where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2]);
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2]);
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -539,6 +539,7 @@ class CommonController extends Controller
                     $data['seller_product_name'] = $sellerData->seller_product_name;
                     $data['seller_product_price'] = $sellerData->seller_product_price;
                     $data['seller_product_images'] = $seller_image;
+                    $data['wishlist_status'] = $sellerData->wishlist ? $sellerData->wishlist->status : 0;
                     array_push($seller_approve_data, $data);
                 }
                 $sellerProductCount = count($seller_approve_data);
@@ -1021,7 +1022,7 @@ class CommonController extends Controller
             $wishlist = Wishlist::where('user_id',$input['user_id'])->where('status',1)->pluck('seller_product_id')->toArray();
             if($wishlist)
             {
-                $sellerProductGet = SellerProducts::whereIn('id',$wishlist)->where('is_active',1)->orderBy('id','desc')->get();
+                $sellerProductGet = SellerProducts::with('wishlist')->whereIn('id',$wishlist)->where('is_active',1)->orderBy('id','desc')->get();
                 if(!$sellerProductGet->isEmpty())
                 {
                     $seller_approve_data = array();
@@ -1038,6 +1039,7 @@ class CommonController extends Controller
                         $data['seller_product_name'] = $sellerData->seller_product_name;
                         $data['seller_product_price'] = $sellerData->seller_product_price;
                         $data['seller_product_images'] = $seller_image;
+                        $data['wishlist_status'] = $sellerData->wishlist ? $sellerData->wishlist->status : 0;
                         array_push($seller_approve_data, $data);
                     }
                     $sellerProductCount = count($seller_approve_data);
