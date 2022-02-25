@@ -647,6 +647,7 @@ class CommonController extends Controller
                     array_push($image_array_store, asset("public/upload/seller_product_images/".$image_name));
                 }
     
+                $data['user_id'] = $sellerProduct->user_id;
                 $data['seller_product_id'] = $sellerProduct->id;
                 $data['buyer_product_id'] = $sellerProduct->buyer_product_id;
                 $data['seller_product_name'] = $sellerProduct->seller_product_name;
