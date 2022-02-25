@@ -13,6 +13,7 @@ use App\Models\Admin;
 use Auth;
 use Carbon\Carbon;
 use App\Models\Wishlist;
+use App\Models\User;
 
 class CommonController extends Controller
 {
@@ -647,6 +648,10 @@ class CommonController extends Controller
                     array_push($image_array_store, asset("public/upload/seller_product_images/".$image_name));
                 }
     
+                $userDetails = User::where('id',$sellerProduct->user_id)->first();
+                $data['user_id'] = $sellerProduct->user_id;
+                $data['fullname'] = $userDetails->fullname;
+                $data['user_image'] = $userDetails->user_image;
                 $data['user_id'] = $sellerProduct->user_id;
                 $data['seller_product_id'] = $sellerProduct->id;
                 $data['buyer_product_id'] = $sellerProduct->buyer_product_id;
