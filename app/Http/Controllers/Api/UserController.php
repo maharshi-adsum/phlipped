@@ -78,10 +78,10 @@ class UserController extends Controller
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
-            if($input['user_id'] != Auth::user()->id)
-            {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
-            }
+            // if($input['user_id'] != Auth::user()->id)
+            // {
+            //     return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
+            // }
 
             $user = User::select('id','fullname','email','country_code','phone_number','user_image','street','city','state','country','pincode')->where('id',$input['user_id'])->where('is_active',1)->first();
             if($user)
