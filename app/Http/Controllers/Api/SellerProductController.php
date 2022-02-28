@@ -119,24 +119,24 @@ class SellerProductController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "true", 'data' => array(), 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
+                return response()->json(['status' => "true",'data' => array(), 'messages' => array('Unauthorized access')]);
             }
 
             $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_active',1)->first();
             if(!$checkProduct)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
+                return response()->json(['status' => "true",'data' => array(), 'messages' => array('Something went wrong!')]);
             }
 
             $sellerProducts = SellerProducts::where('user_id',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('is_active',1)->first();
             if($sellerProducts)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('You have already posted for sale')]);
+                return response()->json(['status' => "true",'data' => array(), 'messages' => array('You have already posted for sale')]);
             }
 
             $data['user_id'] = $input['user_id'];
@@ -175,7 +175,7 @@ class SellerProductController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Something went wrong!')]);
+                return response()->json(['status' => "true",'data' => array(), 'messages' => array('Something went wrong!')]);
             }
 
         } catch (Exception $e) {
