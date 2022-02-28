@@ -143,7 +143,14 @@ class AuthController extends Controller
 
                 if($user = $this->authenticator->attemptSignUp($credentials))
                 {
-                    $update = User::where('id',$user['id'])->update(['device_token'=>$input['device_token'],'device_type'=>$input['device_type']]);
+                    
+                    \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
+                    $customer = \Stripe\Customer::create(array(
+                        'email' => $input['email'],
+                        'name' => $input['fullname'],
+                    ));
+
+                    $update = User::where('id',$user['id'])->update(['customer_id' => $customer->id, 'device_token' => $input['device_token'], 'device_type' => $input['device_type']]);
                     $success = $this->loginfunction($input,$user);
                     return $this->successResponse(
                         $success,'You have successfully registered and otp sent to your phone number.'
