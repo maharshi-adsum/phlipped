@@ -36,4 +36,7 @@ return [
         'secret' => env('STRIPE_SECRET'),
     ],
 
+    'fcm' => [
+        'token' => env('FCM_TOKEN'),
+    ],
 ];

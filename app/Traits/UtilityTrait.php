@@ -256,10 +256,8 @@ trait UtilityTrait
 
     public function sendPushNotification($fields)
     {
-        $appKey = Setting::first();
-
         $headers = [
-            'Authorization: key='.$appKey->firebase_server_key,
+            'Authorization: key='.config("services.fcm.token"),
             'Content-Type: application/json',
         ];
 

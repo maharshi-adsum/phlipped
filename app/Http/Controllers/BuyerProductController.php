@@ -8,6 +8,7 @@ use App\Traits\UtilityTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\BuyerProducts;
+use App\Models\User;
 use Datatables;
 
 class BuyerProductController extends Controller
@@ -118,11 +119,37 @@ class BuyerProductController extends Controller
 
     public function productApproveDisapprove(Request $request)
     {
-        $data = BuyerProducts::where('is_active',1)->find($request->id);
+        $data = BuyerProducts::where('id',$request->id)->where('is_active',1)->first();
         if($data)
         {
             $data->buyer_product_status = $request->status;
             $data->save();
+
+            $image_name = explode(',',$data->buyer_product_images);
+            $imagePath = $image_name ? asset("public/upload/buyer_product_images/".$image_name[0]) : '';
+            
+            if($request->status == 1)
+            {
+                $message = [
+                    "title" => "Your post is approved",
+                    "body" => "Your ". $data->buyer_product_name ." post approved",
+                    "image" => $imagePath,
+                    "sound" => "default"
+                ];
+            }
+
+            if($request->status == 2)
+            {
+                $message = [
+                    "title" => "Your post wasn't approved",
+                    "body" => "Your ". $data->buyer_product_name ." post disapproved",
+                    "image" => $imagePath,
+                    "sound" => "default"
+                ];
+            }
+
+            $token = User::where('id',$data->user_id)->first();
+            $this->sendSingle($token->device_token, $message);
         }
 
         $pending_count = BuyerProducts::where('is_active',1)->where('buyer_product_status',0)->count();
