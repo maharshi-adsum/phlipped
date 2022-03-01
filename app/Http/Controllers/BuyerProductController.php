@@ -133,7 +133,7 @@ class BuyerProductController extends Controller
                 $message = [
                     "title" => "Your post is approved",
                     "body" => "Your ". $data->buyer_product_name ." post approved",
-                    "image" => $imagePath,
+                    // "image" => $imagePath,
                     "sound" => "default"
                 ];
             }
@@ -143,7 +143,7 @@ class BuyerProductController extends Controller
                 $message = [
                     "title" => "Your post wasn't approved",
                     "body" => "Your ". $data->buyer_product_name ." post disapproved",
-                    "image" => $imagePath,
+                    // "image" => $imagePath,
                     "sound" => "default"
                 ];
             }

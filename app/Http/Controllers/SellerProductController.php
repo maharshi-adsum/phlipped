@@ -8,6 +8,7 @@ use App\Traits\UtilityTrait;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\BuyerProducts;
+use App\Models\User;
 use App\Models\SellerProducts;
 use Datatables;
 
@@ -143,13 +144,46 @@ class SellerProductController extends Controller
 
     public function sellerproductApproveDisapprove(Request $request)
     {
-        $data = SellerProducts::where('is_active',1)->find($request->id);
+        $data = SellerProducts::where('is_active',1)->with('buyerProduct')->find($request->id);
         if($data)
         {
             $data->seller_product_status = $request->status;
             $data->save();
-        }
 
+            if($request->status == 1)
+            {
+                $message = [
+                    "title" => "Your post is approved",
+                    "body" => "Your ". $data->seller_product_name ." post approved",
+                    "sound" => "default"
+                ];
+            }
+
+            if($request->status == 2)
+            {
+                $message = [
+                    "title" => "Your post wasn't approved",
+                    "body" => "Your ". $data->seller_product_name ." post disapproved",
+                    "sound" => "default"
+                ];
+            }
+            $token = User::where('id',$data->user_id)->first();
+            if($request->status == 1 && $data->buyerProduct)
+            {
+                $buyerToken = User::where('id',$data->buyerProduct->user_id)->first();
+               
+                    $buyerMessage = [
+                        "title" => "New post added 🥳🎆🥳",
+                        "body" => $token->fullname." added new ".$data->seller_product_name ." post in your ".$data->buyerProduct->buyer_product_name." post",
+                        "sound" => "default"
+                    ];
+                   
+                    $this->sendSingle($buyerToken->device_token, $buyerMessage);
+            }
+
+            $this->sendSingle($token->device_token, $message);
+        }
+        
         $pending_count = SellerProducts::where('is_active',1)->where('seller_product_status',0)->count();
         $approved_count = SellerProducts::where('is_active',1)->where('seller_product_status',1)->count();
         $disapproved_count = SellerProducts::where('is_active',1)->where('seller_product_status',2)->count();
