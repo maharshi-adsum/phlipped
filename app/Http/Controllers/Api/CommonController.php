@@ -95,7 +95,7 @@ class CommonController extends Controller
             }
 
             $admin = Admin::first();
-            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_active',1)->where('created_at', '<', Carbon::now()->subDays($admin->buyer_days))->orderBy('id', 'DESC');
+            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_active',1)->orderBy('id', 'DESC');
 
             $dataCount = $buyerProductGet->count();
 
