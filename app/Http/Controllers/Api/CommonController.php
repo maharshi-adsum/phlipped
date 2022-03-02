@@ -14,6 +14,7 @@ use Auth;
 use Carbon\Carbon;
 use App\Models\Wishlist;
 use App\Models\User;
+use App\Models\Payment;
 
 class CommonController extends Controller
 {
@@ -1066,6 +1067,128 @@ class CommonController extends Controller
             else
             {
                 return response()->json(['status' => "true", 'data' => ['wishlist_count' => 0, 'wishlist_data' => array()], 'messages' => array('Your wishlist is empty!')]);
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
+    /**
+     * Swagger defination payment
+     *
+     * @OA\Post(
+     *     tags={"Payment"},
+     *     path="/payment",
+     *     description="
+     *  payment",
+     *     summary="payment",
+     *     operationId="payment",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="buyer_product_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="seller_product_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="amount",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="payment_method_types",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="transaction_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="transaction_status",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function payment(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('is_active',1)->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
+
+            if($sellerProduct)
+            {
+                $data['user_id'] = $input['user_id'];
+                $data['customer_id'] = Auth::user()->customer_id;
+                $data['buyer_product_id'] = $input['buyer_product_id'];
+                $data['seller_product_id'] = $input['seller_product_id'];
+                $data['amount'] = $input['amount'];
+                $data['payment_method_types'] = $input['payment_method_types'];
+                $data['transaction_id'] = $input['transaction_id'];
+                $data['transaction_status'] = $input['transaction_status'];
+                $paymentCreate = Payment::firstOrCreate($data);
+
+                if($paymentCreate)
+                {
+                    return response()->json(['status' => "true",'data' => $paymentCreate, 'messages' => array('Payment successfully saved')]);
+                }
+                else
+                {
+                    return response()->json(['status' => "true",'data' => "", 'messages' => array('Something went wrong!')]);
+                }
+            }
+            else
+            {
+                return response()->json(['status' => "true", 'data' => "", 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
