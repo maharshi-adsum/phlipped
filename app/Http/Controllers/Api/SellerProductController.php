@@ -127,7 +127,7 @@ class SellerProductController extends Controller
                 return response()->json(['status' => "true",'data' => array(), 'messages' => array('Unauthorized access')]);
             }
 
-            $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_active',1)->first();
+            $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->first();
             if(!$checkProduct)
             {
                 return response()->json(['status' => "true",'data' => array(), 'messages' => array('Something went wrong!')]);
@@ -255,7 +255,7 @@ class SellerProductController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->where('is_active',1)->orderBy('id', 'DESC')->get();
+            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->where('is_purchased',0)->where('is_active',1)->orderBy('id', 'DESC')->get();
             if(!$sellerProductGet->isEmpty())
             {
                 $product_array = array();

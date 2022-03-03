@@ -96,7 +96,7 @@ class CommonController extends Controller
             }
 
             $admin = Admin::first();
-            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_active',1)->orderBy('id', 'DESC');
+            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->orderBy('id', 'DESC');
 
             $dataCount = $buyerProductGet->count();
 
@@ -209,7 +209,7 @@ class CommonController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $gotOnebuyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_active',1)->first();
+            $gotOnebuyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->first();
 
             if($gotOnebuyerProductGet)
             {
@@ -314,7 +314,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
             $admin = Admin::first();
-            $sellerProduct = SellerProducts::with('wishlist')->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -416,7 +416,7 @@ class CommonController extends Controller
             }
             $admin = Admin::first();
 
-            $sellerProduct = SellerProducts::where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+            $sellerProduct = SellerProducts::where('is_active',1)->where('is_purchased',0)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -523,7 +523,7 @@ class CommonController extends Controller
             $date1 = Carbon::now()->subDays($double_days)->toDateTimeString();
             $date2 = Carbon::now()->subDays($days)->toDateTimeString();
 
-            $sellerProduct = SellerProducts::with('wishlist')->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2]);
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2]);
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -640,7 +640,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $sellerProduct = SellerProducts::with('wishlist')->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
 
             if($sellerProduct)
             {
@@ -748,7 +748,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->first();
+            $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('is_purchased',0)->where('is_active',1)->first();
             
             if($buyerProduct)
             {
@@ -834,7 +834,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->first();
+            $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->where('is_purchased',0)->first();
             
             if($sellerProduct)
             {
@@ -928,7 +928,7 @@ class CommonController extends Controller
             // $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('is_active',1)->first();
             // if($buyerProduct)
             // {
-                $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('is_active',1)->first();
+                $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('is_purchased',0)->where('is_active',1)->first();
                 if($sellerProduct)
                 {
                     $wishlist = Wishlist::where('seller_product_id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->first();
@@ -1034,7 +1034,7 @@ class CommonController extends Controller
             $wishlist = Wishlist::where('user_id',$input['user_id'])->where('status',1)->pluck('seller_product_id')->toArray();
             if($wishlist)
             {
-                $sellerProductGet = SellerProducts::with('wishlist')->whereIn('id',$wishlist)->where('is_active',1)->orderBy('id','desc')->get();
+                $sellerProductGet = SellerProducts::with('wishlist')->where('is_purchased',0)->whereIn('id',$wishlist)->where('is_active',1)->orderBy('id','desc')->get();
                 if(!$sellerProductGet->isEmpty())
                 {
                     $seller_approve_data = array();
@@ -1159,6 +1159,12 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
+            $productCheck = Payment::where('seller_product_id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->first();
+            if($productCheck)
+            {
+                return response()->json(['status' => "true", 'data' => "", 'messages' => array('Product is already purchased')]);
+            }
+
             $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('is_active',1)->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
 
             if($sellerProduct)
@@ -1174,6 +1180,20 @@ class CommonController extends Controller
 
                 if($paymentCreate)
                 {
+                    $buyerStatusChanges = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->first();
+                    if($buyerStatusChanges)
+                    {
+                        $buyerStatusChanges->is_purchased = 1;
+                        $buyerStatusChanges->save();
+                    }
+
+                    $sellerStatusChanges = SellerProducts::where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->first();
+                    if($sellerStatusChanges)
+                    {
+                        $sellerStatusChanges->is_purchased = 1;
+                        $sellerStatusChanges->save();
+                    }
+                    
                     return response()->json(['status' => "true",'data' => $paymentCreate, 'messages' => array('Payment successfully saved')]);
                 }
                 else
