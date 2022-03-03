@@ -640,7 +640,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
 
             if($sellerProduct)
             {
@@ -667,6 +667,7 @@ class CommonController extends Controller
                 $data['seller_product_longitude'] = $sellerProduct->seller_product_longitude ? $sellerProduct->seller_product_longitude : '';
                 $data['seller_product_shipping_charges'] = $sellerProduct->seller_product_shipping_charges;
                 $data['wishlist_status'] = $sellerProduct->wishlist ? $sellerProduct->wishlist->status : 0;
+                $data['is_purchased'] = $sellerProduct->is_purchased;
     
                 return response()->json(['status' => "true",'data' => $data , 'messages' => array('Seller product found')]);
             }
