@@ -1121,10 +1121,6 @@ class CommonController extends Controller
      *     property="transaction_id",
      *     type="string"
      *     ),
-     * @OA\Property(
-     *     property="transaction_status",
-     *     type="string"
-     *     ),
      *    )
      *   ),
      *  ),
@@ -1174,7 +1170,6 @@ class CommonController extends Controller
                 $data['amount'] = $input['amount'];
                 $data['payment_method_types'] = $input['payment_method_types'];
                 $data['transaction_id'] = $input['transaction_id'];
-                $data['transaction_status'] = $input['transaction_status'];
                 $paymentCreate = Payment::firstOrCreate($data);
 
                 if($paymentCreate)
