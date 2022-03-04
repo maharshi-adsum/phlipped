@@ -314,7 +314,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
             $admin = Admin::first();
-            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days))->orderBy('id', 'DESC');
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -416,7 +416,7 @@ class CommonController extends Controller
             }
             $admin = Admin::first();
 
-            $sellerProduct = SellerProducts::where('is_active',1)->where('is_purchased',0)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days));
+            $sellerProduct = SellerProducts::where('is_active',1)->where('is_purchased',0)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days))->orderBy('id', 'DESC');
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -523,7 +523,7 @@ class CommonController extends Controller
             $date1 = Carbon::now()->subDays($double_days)->toDateTimeString();
             $date2 = Carbon::now()->subDays($days)->toDateTimeString();
 
-            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2]);
+            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
@@ -1181,19 +1181,15 @@ class CommonController extends Controller
 
                 if($paymentCreate)
                 {
-                    $buyerStatusChanges = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->first();
+                    $buyerStatusChanges = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->where('buyer_product_status',1)->first();
                     if($buyerStatusChanges)
                     {
                         $buyerStatusChanges->is_purchased = 1;
                         $buyerStatusChanges->save();
                     }
 
-                    $sellerStatusChanges = SellerProducts::where('id',$input['seller_product_id'])->where('buyer_product_id',$input['buyer_product_id'])->first();
-                    if($sellerStatusChanges)
-                    {
-                        $sellerStatusChanges->is_purchased = 1;
-                        $sellerStatusChanges->save();
-                    }
+                    $sellerProduct->is_purchased = 1;
+                    $sellerProduct->save();
                     
                     return response()->json(['status' => "true",'data' => $paymentCreate, 'messages' => array('Payment successfully saved')]);
                 }
@@ -1277,7 +1273,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->where('is_purchased',1)->get();
+            $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->where('buyer_product_status',1)->where('is_active',1)->where('is_purchased',1)->orderBy('id', 'DESC')->get();
 
             if(!$buyerProductGet->isEmpty())
             {
@@ -1304,7 +1300,7 @@ class CommonController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Something went wrong!')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
