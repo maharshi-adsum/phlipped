@@ -1300,7 +1300,7 @@ class CommonController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
+                return response()->json(['status' => "true", 'data' => array(), 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
@@ -1397,7 +1397,7 @@ class CommonController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Product Not Found')]);
+                return response()->json(['status' => "true",'data' => array(), 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
