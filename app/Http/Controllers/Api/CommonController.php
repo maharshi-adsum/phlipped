@@ -1214,6 +1214,203 @@ class CommonController extends Controller
         }
     }
 
+    /**
+     * Swagger defination Product Buy History
+     *
+     * @OA\Post(
+     *     tags={"History"},
+     *     path="/productBuyHistory",
+     *     description="
+     *  Product Buy History",
+     *     summary="Product Buy History",
+     *     operationId="productBuyHistory",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function productBuyHistory(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->where('is_purchased',1)->get();
+
+            if(!$buyerProductGet->isEmpty())
+            {
+                $product_array = array();
+                foreach($buyerProductGet as $data)
+                {                    
+                    $product_data['buyer_product_id'] = $data['id'];
+                    $product_data['buyer_product_name'] = $data['buyer_product_name'];
+                    $product_data['buyer_product_description'] = $data['buyer_product_description'];
+                    $product_data['buyer_product_status'] = $data['buyer_product_status'];
+                    $image_array_store = array();
+                    if($data->buyer_product_images)
+                    {
+                        foreach(explode(',',$data->buyer_product_images) as $image_name)
+                        {
+                            array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
+                            break;
+                        }
+                    }
+                    $product_data['buyer_product_images'] = $image_array_store;
+                    array_push($product_array, $product_data);
+                }
+                return response()->json(['status' => "true", 'data' => $product_array, 'messages' => array('Buyer product list found')]);
+            }
+            else
+            {
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Something went wrong!')]);
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
+    /**
+     * Swagger defination Product Sell History
+     *
+     * @OA\Post(
+     *     tags={"History"},
+     *     path="/productSellHistory",
+     *     description="
+     *  Product Sell History",
+     *     summary="Product Sell History",
+     *     operationId="productSellHistory",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function productSellHistory(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->where('seller_product_status',1)->where('is_purchased',1)->where('is_active',1)->orderBy('id', 'DESC')->get();
+            if(!$sellerProductGet->isEmpty())
+            {
+                $product_array = array();
+                foreach($sellerProductGet as $data)
+                {
+                    $product_data['user_id'] = $data['user_id'];
+                    $product_data['seller_product_id'] = $data['id'];
+                    $product_data['buyer_product_id'] = $data['buyer_product_id'];
+                    $product_data['seller_product_name'] = $data['seller_product_name'];
+                    $product_data['seller_product_price'] = $data['seller_product_price'];
+                    $image_array_store = array();
+                    foreach(explode(',',$data->seller_product_images) as $image_name)
+                    {
+                        array_push($image_array_store, asset("public/upload/seller_thumbnail/".$image_name));
+                        break;
+                    }
+                    $product_data['seller_product_images'] = $image_array_store;
+                    array_push($product_array, $product_data);
+                }
+                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Seller product list found')]);
+            }
+            else
+            {
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Product Not Found')]);
+            }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {

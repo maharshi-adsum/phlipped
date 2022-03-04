@@ -70,6 +70,10 @@ Route::namespace('Api')->group(
 
                 //payment
                 Route::post('payment','CommonController@payment');
+
+                //history
+                Route::post('productBuyHistory','CommonController@productBuyHistory');
+                Route::post('productSellHistory','CommonController@productSellHistory');
             }
         );
     }
