@@ -1375,7 +1375,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $getNotificationGet = UserNotification::where('user_id',$input['user_id'])->orderBy('id', 'DESC');
+            $getNotificationGet = UserNotification::select('id','user_id','title','description','is_read')->where('user_id',$input['user_id'])->orderBy('id', 'DESC');
 
             $dataCount = $getNotificationGet->count();
 
