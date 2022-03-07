@@ -111,10 +111,17 @@ class BuyerProductController extends Controller
                 {
                     $image_name = $file->getClientOriginalName();
                     $image_name = 'buyer_product_images_' . rand(111111,999999) . '_' . time(). '.' . $file->getClientOriginalExtension();
-                    $img = ImageResize::make($file->path());
-                    $img->resize(150, 100, function ($constraint) {
-                        $constraint->aspectRatio();
-                    })->save(public_path('upload/buyer_thumbnail').'/'.$image_name);
+                    // $img = ImageResize::make($file->path());
+                    // $img->resize(150, 100, function ($constraint) {
+                    //     $constraint->aspectRatio();
+                    // })->save(public_path('upload/buyer_thumbnail').'/'.$image_name);
+
+                    $imageResize = ImageResize::make($file->path());
+                    $imageResize->orientate()
+                    ->fit(150, 100, function ($constraint) {
+                        $constraint->upsize();
+                    })
+                    ->save(public_path('upload/buyer_thumbnail').'/'.$image_name);
 
                     $file->move(public_path('upload/buyer_product_images'), $image_name);
                     $dataImage[] = $image_name;
