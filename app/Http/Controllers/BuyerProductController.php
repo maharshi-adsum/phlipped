@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\BuyerProducts;
 use App\Models\User;
 use Datatables;
+use App\Models\UserNotification;
 
 class BuyerProductController extends Controller
 {
@@ -133,7 +134,6 @@ class BuyerProductController extends Controller
                 $message = [
                     "title" => "Your post is approved",
                     "body" => "Your ". $data->buyer_product_name ." post approved",
-                    // "image" => $imagePath,
                     "sound" => "default"
                 ];
             }
@@ -143,13 +143,17 @@ class BuyerProductController extends Controller
                 $message = [
                     "title" => "Your post wasn't approved",
                     "body" => "Your ". $data->buyer_product_name ." post disapproved",
-                    // "image" => $imagePath,
                     "sound" => "default"
                 ];
             }
 
             $token = User::where('id',$data->user_id)->first();
             $this->sendSingle($token->device_token, $message);
+
+            $dataMessage['title'] = $message['title'];
+            $dataMessage['description'] = $message['body'];
+            $dataMessage['user_id'] = $token->id;
+            UserNotification::create($dataMessage);
         }
 
         $pending_count = BuyerProducts::where('is_active',1)->where('buyer_product_status',0)->count();

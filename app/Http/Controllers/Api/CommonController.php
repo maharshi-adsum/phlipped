@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Models\Wishlist;
 use App\Models\User;
 use App\Models\Payment;
+use App\Models\UserNotification;
 
 class CommonController extends Controller
 {
@@ -1298,6 +1299,97 @@ class CommonController extends Controller
             {
                 return response()->json(['status' => "true",'data' => array(), 'messages' => array('Product Not Found')]);
             }
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
+    /**
+     * Swagger defination Notification List
+     *
+     * @OA\Post(
+     *     tags={"Notification"},
+     *     path="/getNotificationList",
+     *     description="
+     *  Notification List",
+     *     summary="Notification List",
+     *     operationId="getNotificationList",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="page",
+     *     description="Page Number",
+     *     type="integer"
+     *     ),
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function getNotificationList(Request $request)
+    {
+        try{
+            $input = $request->all();
+
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }
+
+            $getNotificationGet = UserNotification::where('user_id',$input['user_id'])->orderBy('id', 'DESC');
+
+            $dataCount = $getNotificationGet->count();
+
+            if (empty($input['perpage'])) {
+                $input['perpage'] = !empty($dataCount) ? $dataCount : 10;
+                if (!empty($input['page'])){
+                    $input['perpage'] = empty($dataCount) ? $dataCount : 10;
+                }
+            }
+            $getNotificationGet = $getNotificationGet->paginate($input['perpage']);
+            $getNotificationGet->appends(request()->query())->links();
+            $getNotificationGet = $getNotificationGet->toArray();
+
+            return response()->json(['status' => "true",'data' => $getNotificationGet, 'messages' => array('Notification List Found')]);
 
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);

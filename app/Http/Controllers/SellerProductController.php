@@ -11,6 +11,7 @@ use App\Models\BuyerProducts;
 use App\Models\User;
 use App\Models\SellerProducts;
 use Datatables;
+use App\Models\UserNotification;
 
 class SellerProductController extends Controller
 {
@@ -168,20 +169,29 @@ class SellerProductController extends Controller
                 ];
             }
             $token = User::where('id',$data->user_id)->first();
+            $this->sendSingle($token->device_token, $message);
+            $dataMessage['title'] = $message['title'];
+            $dataMessage['description'] = $message['body'];
+            $dataMessage['user_id'] = $token->id;
+            UserNotification::create($dataMessage);
+
             if($request->status == 1 && $data->buyerProduct)
             {
                 $buyerToken = User::where('id',$data->buyerProduct->user_id)->first();
                
-                    $buyerMessage = [
-                        "title" => "New post added 🥳🎆🥳",
-                        "body" => $token->fullname." added new ".$data->seller_product_name ." post in your ".$data->buyerProduct->buyer_product_name." post",
-                        "sound" => "default"
-                    ];
-                   
-                    $this->sendSingle($buyerToken->device_token, $buyerMessage);
-            }
+                $buyerMessage = [
+                    "title" => "New post added 🥳🎆🥳",
+                    "body" => $token->fullname." added new ".$data->seller_product_name ." post in your ".$data->buyerProduct->buyer_product_name." post",
+                    "sound" => "default"
+                ];
+                
+                $this->sendSingle($buyerToken->device_token, $buyerMessage);
 
-            $this->sendSingle($token->device_token, $message);
+                $dataMessage['title'] = $buyerMessage['title'];
+                $dataMessage['description'] = $buyerMessage['body'];
+                $dataMessage['user_id'] = $buyerToken->id;
+                UserNotification::create($dataMessage);
+            }
         }
         
         $pending_count = SellerProducts::where('is_active',1)->where('seller_product_status',0)->count();

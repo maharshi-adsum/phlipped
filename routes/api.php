@@ -73,6 +73,9 @@ Route::namespace('Api')->group(
                 //history
                 Route::post('productBuyHistory','CommonController@productBuyHistory');
                 Route::post('productSellHistory','CommonController@productSellHistory');
+
+                //notification
+                Route::post('getNotificationList','CommonController@getNotificationList');
             }
         );
     }
