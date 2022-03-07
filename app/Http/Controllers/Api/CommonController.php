@@ -353,107 +353,6 @@ class CommonController extends Controller
     }
 
     /**
-     * Swagger defination Seller All Product List By Buyer Product Id
-     *
-     * @OA\Post(
-     *     tags={"Seller Product List"},
-     *     path="/sellerAllProductList",
-     *     description="
-     *  Seller All Product List By Buyer Product Id",
-     *     summary="Seller All Product List By Buyer Product Id",
-     *     operationId="sellerAllProductList",
-     * @OA\Parameter(
-     *     name="Content-Language",
-     *     in="header",
-     *     description="Content-Language",
-     *     required=false,@OA\Schema(type="string")
-     *     ),
-     * @OA\RequestBody(
-     *     required=true,
-     * @OA\MediaType(
-     *     mediaType="multipart/form-data",
-     * @OA\JsonContent(
-     * @OA\Property(
-     *     property="user_id",
-     *     type="string"
-     *     ),
-     *    )
-     *   ),
-     *  ),
-     * @OA\Response(
-     *     response=200,
-     *     description="User response",@OA\JsonContent
-     *     (ref="#/components/schemas/SuccessResponse")
-     * ),
-     * @OA\Response(
-     *     response="400",
-     *     description="Validation error",@OA\JsonContent
-     *     (ref="#/components/schemas/ErrorResponse")
-     * ),
-     * @OA\Response(
-     *     response="403",
-     *     description="Not Authorized Invalid or missing Authorization header",@OA\
-     *     JsonContent(ref="#/components/schemas/ErrorResponse")
-     * ),
-     * @OA\Response(
-     *     response=500,
-     *     description="Unexpected error",@OA\JsonContent
-     *     (ref="#/components/schemas/ErrorResponse")
-     * ),
-     * security={
-     *     {"API-Key": {}}
-     * }
-     * )
-     */
-    public function sellerAllProductList(Request $request)
-    {
-        try{
-            $input = $request->all();
-
-            if($input['user_id'] != Auth::user()->id)
-            {
-                return $this->sendBadRequest('Unauthorized access');
-            }
-            $admin = Admin::first();
-
-            $sellerProduct = SellerProducts::where('is_active',1)->where('is_purchased',0)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days))->orderBy('id', 'DESC');
-            
-            $sellerProductGet = $sellerProduct->get();
-            if(!$sellerProductGet->isEmpty())
-            {
-                $seller_approve_data = array();
-                foreach($sellerProductGet as $sellerData)
-                {
-                    $seller_image = "";
-                    if($image_name = explode(',',$sellerData->seller_product_images))
-                    {
-                        $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
-                    }
-        
-                    $data['seller_product_id'] = $sellerData->id;
-                    $data['buyer_product_id'] = $sellerData->buyer_product_id;
-                    $data['seller_product_name'] = $sellerData->seller_product_name;
-                    $data['seller_product_price'] = $sellerData->seller_product_price;
-                    $data['seller_product_images'] = $seller_image;
-                    array_push($seller_approve_data, $data);
-                }
-                $sellerProductCount = count($seller_approve_data);
-    
-                return response()->json(['status' => "true",'data' => ['seller_product_count' => $sellerProductCount, 'seller_product_data' => $seller_approve_data] , 'messages' => array('Seller product list found')]);
-            }
-            else
-            {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
-            }
-
-        } catch (Exception $e) {
-            return $this->sendErrorResponse($e);
-        } catch (RequestException $e) {
-            return $this->sendErrorResponse($e);
-        }
-    }
-
-    /**
      * Swagger defination Seller Open Product List
      *
      * @OA\Post(
@@ -654,7 +553,7 @@ class CommonController extends Controller
                 $data['user_id'] = $sellerProduct->user_id;
                 $data['fullname'] = $userDetails->fullname;
                 $data['user_image'] = $userDetails->user_image;
-                $data['user_id'] = $sellerProduct->user_id;
+                $data['device_token'] = $sellerProduct->device_token ? $sellerProduct->device_token : "";
                 $data['seller_product_id'] = $sellerProduct->id;
                 $data['buyer_product_id'] = $sellerProduct->buyer_product_id;
                 $data['seller_product_name'] = $sellerProduct->seller_product_name;

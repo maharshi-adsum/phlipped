@@ -56,7 +56,6 @@ Route::namespace('Api')->group(
 
                 //approved seller product
                 Route::post('approvedSellerAllProductList','CommonController@approvedSellerAllProductList');
-                Route::post('sellerAllProductList','CommonController@sellerAllProductList');
                 Route::post('sellerOpenProductList','CommonController@sellerOpenProductList');
                 Route::post('approvedSellerOneProductList','CommonController@approvedSellerOneProductList');
 
