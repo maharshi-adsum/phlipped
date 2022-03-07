@@ -553,7 +553,7 @@ class CommonController extends Controller
                 $data['user_id'] = $sellerProduct->user_id;
                 $data['fullname'] = $userDetails->fullname;
                 $data['user_image'] = $userDetails->user_image;
-                $data['device_token'] = $sellerProduct->device_token ? $sellerProduct->device_token : "";
+                $data['device_token'] = $userDetails->device_token ? $userDetails->device_token : "";
                 $data['seller_product_id'] = $sellerProduct->id;
                 $data['buyer_product_id'] = $sellerProduct->buyer_product_id;
                 $data['seller_product_name'] = $sellerProduct->seller_product_name;
