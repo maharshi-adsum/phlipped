@@ -83,7 +83,7 @@ class UserController extends Controller
             //     return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             // }
 
-            $user = User::select('id','fullname','email','country_code','phone_number','user_image','street','city','state','country','pincode')->where('id',$input['user_id'])->where('is_active',1)->first();
+            $user = User::select('id','fullname','email','country_code','phone_number','user_image','street','city','state','country','pincode','device_token')->where('id',$input['user_id'])->where('is_active',1)->first();
             if($user)
             {
                 return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile found.')]);
