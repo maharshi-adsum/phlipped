@@ -76,6 +76,7 @@ Route::namespace('Api')->group(
 
                 //notification
                 Route::post('getNotificationList','CommonController@getNotificationList');
+                Route::post('clearNotificationList','CommonController@clearNotificationList');
             }
         );
     }

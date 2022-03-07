@@ -1375,9 +1375,9 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $getNotificationGet = UserNotification::select('id','user_id','title','description','is_read')->where('user_id',$input['user_id'])->orderBy('id', 'DESC');
+            $getNotification = UserNotification::select('id','user_id','title','description')->where('is_delete',0)->where('user_id',$input['user_id'])->orderBy('id', 'DESC');
 
-            $dataCount = $getNotificationGet->count();
+            $dataCount = $getNotification->count();
 
             if (empty($input['perpage'])) {
                 $input['perpage'] = !empty($dataCount) ? $dataCount : 10;
@@ -1385,11 +1385,90 @@ class CommonController extends Controller
                     $input['perpage'] = empty($dataCount) ? $dataCount : 10;
                 }
             }
-            $getNotificationGet = $getNotificationGet->paginate($input['perpage']);
-            $getNotificationGet->appends(request()->query())->links();
-            $getNotificationGet = $getNotificationGet->toArray();
+            $getNotification = $getNotification->paginate($input['perpage']);
+            $getNotification->appends(request()->query())->links();
+            $getNotification = $getNotification->toArray();
 
-            return response()->json(['status' => "true",'data' => $getNotificationGet, 'messages' => array('Notification List Found')]);
+            return response()->json(['status' => "true",'data' => $getNotification, 'messages' => array('Notification List Found')]);
+
+        } catch (Exception $e) {
+            return $this->sendErrorResponse($e);
+        } catch (RequestException $e) {
+            return $this->sendErrorResponse($e);
+        }
+    }
+
+    /**
+     * Swagger defination Notification List Clear
+     *
+     * @OA\Post(
+     *     tags={"Notification"},
+     *     path="/clearNotificationList",
+     *     description="
+     *  Notification List Clear",
+     *     summary="Notification List Clear",
+     *     operationId="clearNotificationList",
+     * @OA\Parameter(
+     *     name="Content-Language",
+     *     in="header",
+     *     description="Content-Language",
+     *     required=false,@OA\Schema(type="string")
+     *     ),
+     * @OA\RequestBody(
+     *     required=true,
+     * @OA\MediaType(
+     *     mediaType="multipart/form-data",
+     * @OA\JsonContent(
+     * @OA\Property(
+     *     property="user_id",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="notification_id",
+     *     type="array", @OA\Items(type="Integer")
+     *     )
+     *    )
+     *   ),
+     *  ),
+     * @OA\Response(
+     *     response=200,
+     *     description="User response",@OA\JsonContent
+     *     (ref="#/components/schemas/SuccessResponse")
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response="403",
+     *     description="Not Authorized Invalid or missing Authorization header",@OA\
+     *     JsonContent(ref="#/components/schemas/ErrorResponse")
+     * ),
+     * @OA\Response(
+     *     response=500,
+     *     description="Unexpected error",@OA\JsonContent
+     *     (ref="#/components/schemas/ErrorResponse")
+     * ),
+     * security={
+     *     {"API-Key": {}}
+     * }
+     * )
+     */
+    public function clearNotificationList(Request $request)
+    {
+        try{
+            $input = $request->all();
+            
+            if($input['user_id'] != Auth::user()->id)
+            {
+                return $this->sendBadRequest('Unauthorized access');
+            }            
+            $notificationId = explode(',',$input['notification_id']);
+
+            $clearNotification = UserNotification::whereIn('id',$notificationId)->where('user_id',$input['user_id'])->update(['is_delete' => 1]);
+
+            return response()->json(['status' => "true",'data' => "", 'messages' => array('Notification List Clear')]);
 
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
