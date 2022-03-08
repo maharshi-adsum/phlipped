@@ -1423,10 +1423,6 @@ class CommonController extends Controller
      *     property="user_id",
      *     type="string"
      *     ),
-     * @OA\Property(
-     *     property="notification_id",
-     *     type="array", @OA\Items(type="Integer")
-     *     )
      *    )
      *   ),
      *  ),
@@ -1463,10 +1459,9 @@ class CommonController extends Controller
             if($input['user_id'] != Auth::user()->id)
             {
                 return $this->sendBadRequest('Unauthorized access');
-            }            
-            $notificationId = explode(',',$input['notification_id']);
+            }
 
-            $clearNotification = UserNotification::whereIn('id',$notificationId)->where('user_id',$input['user_id'])->update(['is_delete' => 1]);
+            $clearNotification = UserNotification::where('user_id',$input['user_id'])->update(['is_delete' => 1]);
 
             return response()->json(['status' => "true",'data' => "", 'messages' => array('Notification List Clear')]);
 
