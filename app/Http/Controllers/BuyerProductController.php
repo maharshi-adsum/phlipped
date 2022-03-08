@@ -153,6 +153,9 @@ class BuyerProductController extends Controller
             $dataMessage['title'] = $message['title'];
             $dataMessage['description'] = $message['body'];
             $dataMessage['user_id'] = $token->id;
+            $dataMessage['notification_type'] = 1;
+            $dataMessage['buyer_product_id'] = 0;
+            $dataMessage['seller_product_id'] = 0;
             UserNotification::create($dataMessage);
         }
 

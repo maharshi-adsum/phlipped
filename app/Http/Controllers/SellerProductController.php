@@ -173,6 +173,9 @@ class SellerProductController extends Controller
             $dataMessage['title'] = $message['title'];
             $dataMessage['description'] = $message['body'];
             $dataMessage['user_id'] = $token->id;
+            $dataMessage['notification_type'] = 2;
+            $dataMessage['buyer_product_id'] = 0;
+            $dataMessage['seller_product_id'] = 0;
             UserNotification::create($dataMessage);
 
             if($request->status == 1 && $data->buyerProduct)
@@ -190,6 +193,9 @@ class SellerProductController extends Controller
                 $dataMessage['title'] = $buyerMessage['title'];
                 $dataMessage['description'] = $buyerMessage['body'];
                 $dataMessage['user_id'] = $buyerToken->id;
+                $dataMessage['notification_type'] = 3;
+                $dataMessage['buyer_product_id'] = $data->buyer_product_id;
+                $dataMessage['seller_product_id'] = $data->id;
                 UserNotification::create($dataMessage);
             }
         }
