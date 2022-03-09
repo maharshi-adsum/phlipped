@@ -846,6 +846,7 @@ class CommonController extends Controller
                         $data['seller_product_id'] = $input['seller_product_id'];
                         $wishlist = Wishlist::create($data);
                         $message = 'added';
+                        $wishlist = Wishlist::where('id',$wishlist->id)->first();
                     }
                     if($wishlist)
                     {
