@@ -113,12 +113,8 @@ class CommonController extends Controller
 
             $dataCount = $buyerProductGet->count();
 
-            if (empty($input['perpage'])) {
-                $input['perpage'] = !empty($dataCount) ? $dataCount : 10;
-                if (!empty($input['page'])){
-                    $input['perpage'] = empty($dataCount) ? $dataCount : 10;
-                }
-            }
+            $input['perpage'] = empty($input['perpage']) ? 10 : $input['perpage'];
+
             $buyerProductGet = $buyerProductGet->paginate($input['perpage']);
             $buyerProductGet->appends(request()->query())->links();
             $buyerProductGet = $buyerProductGet->toArray();
@@ -1403,12 +1399,8 @@ class CommonController extends Controller
 
             $dataCount = $getNotification->count();
 
-            if (empty($input['perpage'])) {
-                $input['perpage'] = !empty($dataCount) ? $dataCount : 10;
-                if (!empty($input['page'])){
-                    $input['perpage'] = empty($dataCount) ? $dataCount : 10;
-                }
-            }
+            $input['perpage'] = empty($input['perpage']) ? 10 : $input['perpage'];
+
             $getNotification = $getNotification->paginate($input['perpage']);
             $getNotification->appends(request()->query())->links();
             $getNotification = $getNotification->toArray();
