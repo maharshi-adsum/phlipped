@@ -441,7 +441,7 @@ class CommonController extends Controller
 
             if($input['product_name'])
             {
-                $sellerProduct = SellerProducts::with('wishlist')->where('buyer_product_name','like', '%' . $input['product_name'] . '%')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
+                $sellerProduct = SellerProducts::with('wishlist')->where('seller_product_name','like', '%' . $input['product_name'] . '%')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
             }
             else
             {
