@@ -86,7 +86,7 @@ class UserController extends Controller
             $user = User::select('id','fullname','email','country_code','phone_number','user_image','street','city','state','country','pincode','device_token')->where('id',$input['user_id'])->where('is_active',1)->first();
             if($user)
             {
-                return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile found.')]);
+                return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile found')]);
             }
             else
             {
@@ -221,7 +221,7 @@ class UserController extends Controller
                 unset($user['is_active']);
                 unset($user['created_at']);
                 unset($user['updated_at']);
-                return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile successfully saved.')]);
+                return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile successfully saved')]);
             }
             else
             {

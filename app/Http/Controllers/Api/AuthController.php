@@ -153,17 +153,17 @@ class AuthController extends Controller
                     $update = User::where('id',$user['id'])->update(['customer_id' => $customer->id, 'device_token' => $input['device_token'], 'device_type' => $input['device_type']]);
                     $success = $this->loginfunction($input,$user);
                     return $this->successResponse(
-                        $success,'You have successfully registered and otp sent to your phone number.'
+                        $success,'You have successfully registered'
                     );
                 }
                 else
                 {
-                    return response()->json(['status' => "false", 'data' => "", 'messages' => array('These credentials do not match our records.')]);
+                    return response()->json(['status' => "false", 'data' => "", 'messages' => array('These credentials do not match our records')]);
                 }
             }
             else
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Something went wrong. Please try again.')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Something went wrong. Please try again')]);
             }
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
@@ -238,7 +238,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
-            return response()->json(['status' => "true", 'data' => "", 'messages' => array('validate successfully.')]);
+            return response()->json(['status' => "true", 'data' => "", 'messages' => array('validate successfully')]);
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
         } catch (RequestException $e) {
@@ -343,7 +343,7 @@ class AuthController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array('These credentials do not match our records.')]);
+                return response()->json(['status' => "false", 'data' => "", 'messages' => array('These credentials do not match our records')]);
             }
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
