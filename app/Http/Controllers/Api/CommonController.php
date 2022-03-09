@@ -46,6 +46,10 @@ class CommonController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
+     *     property="product_name",
+     *     type="string"
+     *     ),
+     * @OA\Property(
      *     property="page",
      *     description="Page Number",
      *     type="integer"
@@ -97,7 +101,15 @@ class CommonController extends Controller
             }
 
             $admin = Admin::first();
-            $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->orderBy('id', 'DESC');
+
+            if($input['product_name'])
+            {
+                $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_name','like', '%' . $input['product_name'] . '%')->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->orderBy('id', 'DESC');
+            }
+            else
+            {
+                $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->orderBy('id', 'DESC');
+            }
 
             $dataCount = $buyerProductGet->count();
 
@@ -378,6 +390,10 @@ class CommonController extends Controller
      *     property="user_id",
      *     type="string"
      *     ),
+     * @OA\Property(
+     *     property="product_name",
+     *     type="string"
+     *     ),
      *    )
      *   ),
      *  ),
@@ -423,7 +439,14 @@ class CommonController extends Controller
             $date1 = Carbon::now()->subDays($double_days)->toDateTimeString();
             $date2 = Carbon::now()->subDays($days)->toDateTimeString();
 
-            $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
+            if($input['product_name'])
+            {
+                $sellerProduct = SellerProducts::with('wishlist')->where('buyer_product_name','like', '%' . $input['product_name'] . '%')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
+            }
+            else
+            {
+                $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
+            }
             
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
