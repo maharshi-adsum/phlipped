@@ -127,7 +127,7 @@ class SellerProductController extends Controller
                 return response()->json(['status' => "true",'data' => array(), 'messages' => array('Unauthorized access')]);
             }
 
-            $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->first();
+            $checkProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('purchased_user_id',0)->where('is_active',1)->first();
             if(!$checkProduct)
             {
                 return response()->json(['status' => "true",'data' => array(), 'messages' => array('Something went wrong!')]);

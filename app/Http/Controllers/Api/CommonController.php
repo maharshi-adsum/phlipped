@@ -104,11 +104,11 @@ class CommonController extends Controller
 
             if($input['product_name'])
             {
-                $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_name','like', '%' . $input['product_name'] . '%')->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->orderBy('id', 'DESC');
+                $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_name','like', '%' . $input['product_name'] . '%')->where('buyer_product_status',1)->where('purchased_user_id',0)->where('is_active',1)->orderBy('id', 'DESC');
             }
             else
             {
-                $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->orderBy('id', 'DESC');
+                $buyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('buyer_product_status',1)->where('purchased_user_id',0)->where('is_active',1)->orderBy('id', 'DESC');
             }
 
             $dataCount = $buyerProductGet->count();
@@ -218,7 +218,7 @@ class CommonController extends Controller
                 return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             }
 
-            $gotOnebuyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('is_purchased',0)->where('is_active',1)->first();
+            $gotOnebuyerProductGet = BuyerProducts::where('user_id','!=',$input['user_id'])->where('id',$input['buyer_product_id'])->where('buyer_product_status',1)->where('purchased_user_id',0)->where('is_active',1)->first();
 
             if($gotOnebuyerProductGet)
             {
@@ -668,7 +668,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('is_purchased',0)->where('is_active',1)->first();
+            $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('purchased_user_id',0)->where('is_active',1)->first();
             
             if($buyerProduct)
             {
@@ -1104,7 +1104,7 @@ class CommonController extends Controller
                     $buyerStatusChanges = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->where('buyer_product_status',1)->first();
                     if($buyerStatusChanges)
                     {
-                        $buyerStatusChanges->is_purchased = 1;
+                        $buyerStatusChanges->purchased_user_id = $input['user_id'];
                         $buyerStatusChanges->save();
                     }
 
@@ -1193,7 +1193,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $buyerProductGet = BuyerProducts::where('user_id',$input['user_id'])->where('buyer_product_status',1)->where('is_active',1)->where('is_purchased',1)->orderBy('id', 'DESC')->get();
+            $buyerProductGet = BuyerProducts::where('buyer_product_status',1)->where('is_active',1)->where('purchased_user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
 
             if(!$buyerProductGet->isEmpty())
             {

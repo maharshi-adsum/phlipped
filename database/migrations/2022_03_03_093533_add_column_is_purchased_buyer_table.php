@@ -14,7 +14,7 @@ class AddColumnIsPurchasedBuyerTable extends Migration
     public function up()
     {
         Schema::table('buyer_products', function (Blueprint $table) {
-            $table->integer('is_purchased')->after('buyer_product_status')->default(0);
+            $table->integer('purchased_user_id')->after('buyer_product_status')->default(0);
         });
     }
 
