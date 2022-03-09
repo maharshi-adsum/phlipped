@@ -92,12 +92,12 @@ class CommonController extends Controller
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) 
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
+                return response()->json(['status' => "true", 'data' => [], 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
 
             if($input['user_id'] != Auth::user()->id)
             {
-                return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
+                return response()->json(['status' => "true",'data' => [], 'messages' => array('Unauthorized access')]);
             }
 
             $admin = Admin::first();
@@ -470,7 +470,7 @@ class CommonController extends Controller
             }
             else
             {
-                return response()->json(['status' => "false", 'data' => "", 'messages' => array('Product Not Found')]);
+                return response()->json(['status' => "true", 'data' => [], 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
