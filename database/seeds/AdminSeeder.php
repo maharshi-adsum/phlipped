@@ -20,6 +20,7 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('admin123'),
             'buyer_days' => '0',
             'seller_days' => '0',
+            'commission' => '0',
         ]);
     }
 }

@@ -11,7 +11,7 @@ class Admin extends Authenticatable
     Use UtilityTrait;
 
     protected $fillable = [
-        'username','first_name','last_name','email','phone_number','profile_image','buyer_days','seller_days',
+        'username','first_name','last_name','email','phone_number','profile_image','buyer_days','seller_days','commission',
      ];
      protected $table="admins";
  	/**

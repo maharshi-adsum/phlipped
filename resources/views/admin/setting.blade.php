@@ -90,7 +90,20 @@
                         </div>
                     </div>
                     <hr>
-
+                    <div class="form-group row">
+                        <label class="col-sm-3 col-form-label">
+                            Commission
+                        </label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="number" name="commission" class="form-control" value="@if($profile){{$profile->commission}}@endif" placeholder="Enter Commission">
+                                <div class="input-group-append">
+                                    <span class="input-group-text" id="basic-addon2">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
                     <div class="pt-2">
                         <button type="submit" class="btn float-right" style="background-color: #0091D6" id="submitProfile">Save</button>
                     </div>
