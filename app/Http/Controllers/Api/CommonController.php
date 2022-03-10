@@ -607,7 +607,7 @@ class CommonController extends Controller
                 $data['seller_product_longitude'] = $sellerProduct->seller_product_longitude ? $sellerProduct->seller_product_longitude : '';
                 $data['seller_product_shipping_charges'] = $sellerProduct->seller_product_shipping_charges;
                 $data['wishlist_status'] = $sellerProduct->wishlist ? $sellerProduct->wishlist->status : 0;
-                $data['is_purchased'] = $sellerProduct->is_purchased;
+                $data['is_purchased'] = $sellerProduct->is_purchased ? 1 : 0;
     
                 return response()->json(['status' => "true",'data' => $data , 'messages' => array('Seller product found')]);
             }
@@ -1129,7 +1129,7 @@ class CommonController extends Controller
                         $buyerStatusChanges->save();
                     }
 
-                    $sellerProduct->is_purchased = 1;
+                    $sellerProduct->is_purchased = $input['user_id'];
                     $sellerProduct->save();
                     
                     return response()->json(['status' => "true",'data' => $paymentCreate, 'messages' => array('Payment successfully saved')]);
@@ -1214,35 +1214,62 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $buyerProductGet = BuyerProducts::where('buyer_product_status',1)->where('is_active',1)->where('purchased_user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
-
-            if(!$buyerProductGet->isEmpty())
+            $sellerProductGet = SellerProducts::where('is_purchased',$input['user_id'])->where('seller_product_status',1)->where('is_active',1)->orderBy('id', 'DESC')->get();
+            if(!$sellerProductGet->isEmpty())
             {
                 $product_array = array();
-                foreach($buyerProductGet as $data)
-                {                    
-                    $product_data['buyer_product_id'] = $data['id'];
-                    $product_data['buyer_product_name'] = $data['buyer_product_name'];
-                    $product_data['buyer_product_description'] = $data['buyer_product_description'];
-                    $product_data['buyer_product_status'] = $data['buyer_product_status'];
+                foreach($sellerProductGet as $data)
+                {
+                    $product_data['user_id'] = $data['user_id'];
+                    $product_data['seller_product_id'] = $data['id'];
+                    $product_data['buyer_product_id'] = $data['buyer_product_id'];
+                    $product_data['seller_product_name'] = $data['seller_product_name'];
+                    $product_data['seller_product_price'] = $data['seller_product_price'];
                     $image_array_store = array();
-                    if($data->buyer_product_images)
+                    foreach(explode(',',$data->seller_product_images) as $image_name)
                     {
-                        foreach(explode(',',$data->buyer_product_images) as $image_name)
-                        {
-                            array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
-                            break;
-                        }
+                        array_push($image_array_store, asset("public/upload/seller_thumbnail/".$image_name));
+                        break;
                     }
-                    $product_data['buyer_product_images'] = $image_array_store;
+                    $product_data['seller_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);
                 }
-                return response()->json(['status' => "true", 'data' => $product_array, 'messages' => array('Buyer product list found')]);
+                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Buy product list found')]);
             }
             else
             {
-                return response()->json(['status' => "true", 'data' => array(), 'messages' => array('Product Not Found')]);
+                return response()->json(['status' => "true",'data' => array(), 'messages' => array('Product Not Found')]);
             }
+
+            // $buyerProductGet = BuyerProducts::where('buyer_product_status',1)->where('is_active',1)->where('purchased_user_id',$input['user_id'])->orderBy('id', 'DESC')->get();
+
+            // if(!$buyerProductGet->isEmpty())
+            // {
+            //     $product_array = array();
+            //     foreach($buyerProductGet as $data)
+            //     {                    
+            //         $product_data['buyer_product_id'] = $data['id'];
+            //         $product_data['buyer_product_name'] = $data['buyer_product_name'];
+            //         $product_data['buyer_product_description'] = $data['buyer_product_description'];
+            //         $product_data['buyer_product_status'] = $data['buyer_product_status'];
+            //         $image_array_store = array();
+            //         if($data->buyer_product_images)
+            //         {
+            //             foreach(explode(',',$data->buyer_product_images) as $image_name)
+            //             {
+            //                 array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
+            //                 break;
+            //             }
+            //         }
+            //         $product_data['buyer_product_images'] = $image_array_store;
+            //         array_push($product_array, $product_data);
+            //     }
+            //     return response()->json(['status' => "true", 'data' => $product_array, 'messages' => array('Buyer product list found')]);
+            // }
+            // else
+            // {
+            //     return response()->json(['status' => "true", 'data' => array(), 'messages' => array('Product Not Found')]);
+            // }
 
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
@@ -1314,7 +1341,7 @@ class CommonController extends Controller
                 return $this->sendBadRequest('Unauthorized access');
             }
 
-            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->where('seller_product_status',1)->where('is_purchased',1)->where('is_active',1)->orderBy('id', 'DESC')->get();
+            $sellerProductGet = SellerProducts::where('user_id',$input['user_id'])->where('seller_product_status',1)->where('is_purchased','!=',0)->where('is_active',1)->orderBy('id', 'DESC')->get();
             if(!$sellerProductGet->isEmpty())
             {
                 $product_array = array();
@@ -1334,7 +1361,7 @@ class CommonController extends Controller
                     $product_data['seller_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);
                 }
-                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Seller product list found')]);
+                return response()->json(['status' => "true",'data' => $product_array, 'messages' => array('Sell product list found')]);
             }
             else
             {
