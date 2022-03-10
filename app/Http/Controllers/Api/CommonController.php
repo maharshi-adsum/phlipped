@@ -119,6 +119,8 @@ class CommonController extends Controller
             $buyerProductGet->appends(request()->query())->links();
             $buyerProductGet = $buyerProductGet->toArray();
 
+        if($buyerProductGet['data'])
+        {
             $product_array = array();
             foreach($buyerProductGet['data'] as $data)
             {
@@ -136,6 +138,12 @@ class CommonController extends Controller
             $buyerProductGet['data'] = $product_array;
 
             return response()->json(['status' => "true",'data' => $buyerProductGet, 'messages' => array('Got one all product list found')]);
+
+        }
+        else
+        {
+            return response()->json(['status' => "false", 'data' => [], 'messages' => array('Product Not Found')]);
+        }
 
         } catch (Exception $e) {
             return $this->sendErrorResponse($e);
@@ -470,7 +478,7 @@ class CommonController extends Controller
             }
             else
             {
-                return response()->json(['status' => "true", 'data' => [], 'messages' => array('Product Not Found')]);
+                return response()->json(['status' => "false", 'data' => [], 'messages' => array('Product Not Found')]);
             }
 
         } catch (Exception $e) {
