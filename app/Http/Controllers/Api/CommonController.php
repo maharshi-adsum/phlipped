@@ -398,6 +398,11 @@ class CommonController extends Controller
      *     property="product_name",
      *     type="string"
      *     ),
+     * @OA\Property(
+     *     property="page",
+     *     description="Page Number",
+     *     type="integer"
+     *     ),
      *    )
      *   ),
      *  ),
@@ -443,7 +448,7 @@ class CommonController extends Controller
             $date1 = Carbon::now()->subDays($double_days)->toDateTimeString();
             $date2 = Carbon::now()->subDays($days)->toDateTimeString();
 
-            if($input['product_name'])
+            if(isset($input['product_name']))
             {
                 $sellerProduct = SellerProducts::with('wishlist')->where('seller_product_name','like', '%' . $input['product_name'] . '%')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
             }
@@ -451,30 +456,38 @@ class CommonController extends Controller
             {
                 $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('seller_product_status',1)->whereBetween('created_at',[$date1, $date2])->orderBy('id', 'DESC');
             }
-            
-            $sellerProductGet = $sellerProduct->get();
-            if(!$sellerProductGet->isEmpty())
+
+            $dataCount = $sellerProduct->count();
+
+            $input['perpage'] = empty($input['perpage']) ? 10 : $input['perpage'];
+
+            $sellerProduct = $sellerProduct->paginate($input['perpage']);
+            $sellerProduct->appends(request()->query())->links();
+            $sellerProduct = $sellerProduct->toArray();
+
+            if($sellerProduct['data'])
             {
                 $seller_approve_data = array();
-                foreach($sellerProductGet as $sellerData)
+                foreach($sellerProduct['data'] as $sellerData)
                 {
                     $seller_image = "";
-                    if($image_name = explode(',',$sellerData->seller_product_images))
+                    if($image_name = explode(',',$sellerData['seller_product_images']))
                     {
                         $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
                     }
         
-                    $data['seller_product_id'] = $sellerData->id;
-                    $data['buyer_product_id'] = $sellerData->buyer_product_id;
-                    $data['seller_product_name'] = $sellerData->seller_product_name;
-                    $data['seller_product_price'] = $sellerData->seller_product_price;
+                    $data['seller_product_id'] = $sellerData['id'];
+                    $data['buyer_product_id'] = $sellerData['buyer_product_id'];
+                    $data['seller_product_name'] = $sellerData['seller_product_name'];
+                    $data['seller_product_price'] = $sellerData['seller_product_price'];
                     $data['seller_product_images'] = $seller_image;
-                    $data['wishlist_status'] = $sellerData->wishlist ? $sellerData->wishlist->status : 0;
+                    $data['wishlist_status'] = $sellerData['wishlist'] ? $sellerData['wishlist']['status'] : 0;
                     array_push($seller_approve_data, $data);
                 }
                 $sellerProductCount = count($seller_approve_data);
+                $sellerProduct['data'] = $seller_approve_data;
     
-                return response()->json(['status' => "true",'data' => ['seller_product_count' => $sellerProductCount, 'seller_product_data' => $seller_approve_data] , 'messages' => array('Seller product list found')]);
+                return response()->json(['status' => "true",'data' => $sellerProduct , 'messages' => array('Seller product list found')]);
             }
             else
             {
