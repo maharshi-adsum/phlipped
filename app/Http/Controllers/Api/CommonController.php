@@ -695,7 +695,7 @@ class CommonController extends Controller
             {
                 $buyerProduct->is_active = 0;
                 $buyerProduct->save();
-                return response()->json(['status' => "true",'data' => "" , 'messages' => array('Product successfully delete')]);
+                return response()->json(['status' => "true",'data' => "" , 'messages' => array('Product successfully deleted')]);
             }
             else
             {
@@ -781,7 +781,7 @@ class CommonController extends Controller
             {
                 $sellerProduct->is_active = 0;
                 $sellerProduct->save();
-                return response()->json(['status' => "true",'data' => "" , 'messages' => array('Product successfully delete')]);
+                return response()->json(['status' => "true",'data' => "" , 'messages' => array('Product successfully deleted')]);
             }
             else
             {
