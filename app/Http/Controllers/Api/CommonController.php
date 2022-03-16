@@ -126,6 +126,7 @@ class CommonController extends Controller
             {
                 $product_data['buyer_product_id'] = $data['id'];
                 $product_data['buyer_product_name'] = $data['buyer_product_name'];
+                $product_data['buyer_product_description'] = $data['buyer_product_description'];
                 $product_data['buyer_product_images'] = "";
                 if($data['buyer_product_images'])
                 {
@@ -481,6 +482,7 @@ class CommonController extends Controller
                     $data['seller_product_name'] = $sellerData['seller_product_name'];
                     $data['seller_product_price'] = $sellerData['seller_product_price'];
                     $data['seller_product_images'] = $seller_image;
+                    $data['seller_product_location'] = $sellerData['seller_product_location'];
                     $data['wishlist_status'] = $sellerData['wishlist'] ? $sellerData['wishlist']['status'] : 0;
                     array_push($seller_approve_data, $data);
                 }
