@@ -60,7 +60,7 @@
                     <div class="row">
                         <div class="col-sm-6">
                             <span class="font-weight-bold">Name :</span>
-                            <span>{{$data->seller_product_name}}</span>
+                            <span>{{$data->seller_product_name ? $data->seller_product_name : '-'}}</span>
                         </div>
                         <div class="col-sm-6">
                             <span class="font-weight-bold">Price :</span>
@@ -68,7 +68,7 @@
                         </div>
                         <div class="col-sm-6">
                             <span class="font-weight-bold">location :</span>
-                            <span>{{$data->seller_product_location}}</span>
+                            <span>{{$data->seller_product_location ? $data->seller_product_location : '-'}}</span>
                         </div>
                         <div class="col-sm-6">
                             <span class="font-weight-bold">Shipping Charges :</span>
@@ -76,11 +76,15 @@
                         </div>
                         <div class="col-sm-12">
                             <span class="font-weight-bold">Condition :</span>
-                            <span>{{$data->seller_product_condition}}</span>
+                            <span>{{$data->seller_product_condition ? $data->seller_product_condition : '-'}}</span>
                         </div>
                         <div class="col-sm-12">
                             <span class="font-weight-bold">Description :</span>
-                            <span>{{$data->seller_product_description}}</span>
+                            <span>{{$data->seller_product_description ? $data->seller_product_description : '-'}}</span>
+                        </div>
+                        <div class="col-sm-12">
+                            <span class="font-weight-bold">Return Policy :</span>
+                            <span>{{$data->return_policy ? $data->return_policy : '-'}}</span>
                         </div>
                     </div>
                 </div>

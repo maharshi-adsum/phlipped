@@ -606,6 +606,7 @@ class CommonController extends Controller
                 $data['seller_product_latitude'] = $sellerProduct->seller_product_latitude ? $sellerProduct->seller_product_latitude : '';
                 $data['seller_product_longitude'] = $sellerProduct->seller_product_longitude ? $sellerProduct->seller_product_longitude : '';
                 $data['seller_product_shipping_charges'] = $sellerProduct->seller_product_shipping_charges;
+                $data['return_policy'] = $sellerProduct->return_policy ? $sellerProduct->return_policy : '';
                 $data['wishlist_status'] = $sellerProduct->wishlist ? $sellerProduct->wishlist->status : 0;
                 $data['is_purchased'] = $sellerProduct->is_purchased ? 1 : 0;
     

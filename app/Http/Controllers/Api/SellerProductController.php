@@ -81,6 +81,10 @@ class SellerProductController extends Controller
      *     property="seller_product_shipping_charges",
      *     type="string"
      *     ),
+     * @OA\Property(
+     *     property="return_policy",
+     *     type="string"
+     *     ),
      *    )
      *   ),
      *  ),
@@ -149,6 +153,7 @@ class SellerProductController extends Controller
             $data['seller_product_latitude'] = $input['seller_product_latitude'];
             $data['seller_product_longitude'] = $input['seller_product_longitude'];
             $data['seller_product_shipping_charges'] = $input['seller_product_shipping_charges'];
+            $data['return_policy'] = $input['return_policy'];
 
             if($request->hasfile('seller_product_images'))
             {
@@ -279,6 +284,7 @@ class SellerProductController extends Controller
                     $product_data['seller_product_latitude'] = $data['seller_product_latitude'] ? $data['seller_product_latitude'] : '';
                     $product_data['seller_product_longitude'] = $data['seller_product_longitude'] ? $data['seller_product_longitude'] : '';
                     $product_data['seller_product_shipping_charges'] = $data['seller_product_shipping_charges'];
+                    $product_data['return_policy'] = $data['return_policy'] ? $data['return_policy'] : '';
                     $product_data['seller_product_status'] = $data['seller_product_status'];
                     $image_array_store = array();
                     foreach(explode(',',$data->seller_product_images) as $image_name)
