@@ -83,7 +83,7 @@ class UserController extends Controller
             //     return response()->json(['status' => "false",'data' => "", 'messages' => array('Unauthorized access')]);
             // }
 
-            $user = User::select('id','fullname','email','country_code','phone_number','user_image','street','city','state','country','pincode','device_token')->where('id',$input['user_id'])->where('is_active',1)->first();
+            $user = User::select('id','first_name','last_name','email','country_code','phone_number','user_image','dob','ssn_last_4','routing_number','account_number','street','city','state','country','pincode','device_token')->where('id',$input['user_id'])->where('is_active',1)->first();
             if($user)
             {
                 return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile found')]);
@@ -125,11 +125,32 @@ class UserController extends Controller
      *     type="string"
      *     ),
      * @OA\Property(
-     *     property="fullname",
+     *     property="first_name",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="last_name",
      *     type="string"
      *     ),
      * @OA\Property(
      *     property="email",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="dob",
+     *     type="string",
+     *     description="YYYY-MM-DD"
+     *     ),
+     * @OA\Property(
+     *     property="ssn_last_4",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="routing_number",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="account_number",
      *     type="string"
      *     ),
      * @OA\Property(
@@ -190,8 +211,13 @@ class UserController extends Controller
             }
 
             $user = User::where('id',$input['user_id'])->first();
-            $user->fullname = $input['fullname'];
+            $user->first_name = $input['first_name'];
+            $user->last_name = $input['last_name'];
             $user->email = $input['email'];
+            $user->dob = $input['dob'];
+            $user->ssn_last_4 = $input['email'];
+            $user->routing_number = $input['routing_number'];
+            $user->account_number = $input['account_number'];
             if($request->hasfile('user_image'))
             {
                 if($user)
@@ -355,7 +381,8 @@ class UserController extends Controller
             case 'user_profile_update':
                 $params = [
                     'user_id' => 'required|exists:users,id',
-                    'fullname' => 'required',
+                    'first_name' => 'required',
+                    'last_name' => 'required',
                     'email' => 'required',
                     'user_image' => 'required',
                 ];

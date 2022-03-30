@@ -28,7 +28,7 @@ class BuyerProductController extends Controller
     public function buyerProductPendingList(Request $request)
     {
         try {
-            $data = BuyerProducts::select('users.id','users.fullname','buyer_products.*')
+            $data = BuyerProducts::select('users.id','users.first_name','users.last_name','buyer_products.*')
             ->leftJoin('users','buyer_products.user_id','users.id')
             ->where('buyer_products.buyer_product_status',$request->status)
             ->where('buyer_products.is_active',1)
@@ -37,7 +37,11 @@ class BuyerProductController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('fullname', function($row){
-                    return $row->fullname ? $row->fullname : '-';
+                    if($row->first_name && $row->last_name)
+                    {
+                        return $row->first_name.' '.$row->last_name;
+                    }
+                    return '-';
                 })
                 ->addColumn('buyer_product_name', function($row){
                     return $row->buyer_product_name ? $row->buyer_product_name : '-';
@@ -79,7 +83,9 @@ class BuyerProductController extends Controller
                     
                     if (!empty($request->get('buyer_product_search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            if (Str::contains(Str::lower($row['fullname']), Str::lower($request->get('buyer_product_search')))){
+                            if (Str::contains(Str::lower($row['first_name']), Str::lower($request->get('buyer_product_search')))){
+                                return true;
+                            }else if (Str::contains(Str::lower($row['last_name']), Str::lower($request->get('buyer_product_search')))){
                                 return true;
                             }else if (Str::contains(Str::lower($row['buyer_product_name']), Str::lower($request->get('buyer_product_search')))){
                                 return true;

@@ -594,7 +594,8 @@ class CommonController extends Controller
     
                 $userDetails = User::where('id',$sellerProduct->user_id)->first();
                 $data['user_id'] = $sellerProduct->user_id;
-                $data['fullname'] = $userDetails->fullname;
+                $data['first_name'] = $userDetails->first_name;
+                $data['last_name'] = $userDetails->last_name;
                 $data['user_image'] = $userDetails->user_image;
                 $data['device_token'] = $userDetails->device_token ? $userDetails->device_token : "";
                 $data['seller_product_id'] = $sellerProduct->id;
@@ -1135,7 +1136,7 @@ class CommonController extends Controller
                     $sellerProduct->is_purchased = $input['user_id'];
                     $sellerProduct->save();
                     
-                    return response()->json(['status' => "true",'data' => $paymentCreate, 'messages' => array('Payment successfully saved')]);
+                    return response()->json(['status' => "true",'data' => $paymentCreate, 'messages' => array('Product successfully purchased')]);
                 }
                 else
                 {

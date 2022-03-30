@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\SellerProducts;
 use Datatables;
 use App\Models\UserNotification;
+use DB;
 
 class SellerProductController extends Controller
 {
@@ -29,7 +30,7 @@ class SellerProductController extends Controller
     public function sellerProductPendingList(Request $request)
     {
         try {
-            $data = SellerProducts::select('S.fullname as seller_name','B.fullname as buyer_name','seller_products.user_id','seller_products.buyer_product_id','seller_products.id','seller_products.seller_product_name','seller_products.seller_product_images','seller_products.seller_product_status','seller_products.created_at','buyer_products.user_id as buyer_user_id')
+            $data = SellerProducts::select(DB::raw("CONCAT(S.first_name,' ',S.last_name) AS seller_name"),DB::raw("CONCAT(B.first_name,' ',B.last_name) AS buyer_name"),'seller_products.user_id','seller_products.buyer_product_id','seller_products.id','seller_products.seller_product_name','seller_products.seller_product_images','seller_products.seller_product_status','seller_products.created_at','buyer_products.user_id as buyer_user_id')
             ->leftJoin('users as S','seller_products.user_id','S.id')
             ->leftJoin('buyer_products','seller_products.buyer_product_id','buyer_products.id')
             ->leftJoin('users as B','buyer_products.user_id','B.id') 
@@ -184,7 +185,7 @@ class SellerProductController extends Controller
                
                 $buyerMessage = [
                     "title" => "New post added 🥳🎆🥳",
-                    "body" => $token->fullname." added new ".$data->seller_product_name ." post in your ".$data->buyerProduct->buyer_product_name." post",
+                    "body" => $token->first_name.' '.$token->last_name ." added new ".$data->seller_product_name ." post in your ".$data->buyerProduct->buyer_product_name." post",
                     "sound" => "default"
                 ];
                 

@@ -63,7 +63,11 @@ class AuthController extends Controller
      *     mediaType="multipart/form-data",
      * @OA\JsonContent(
      * @OA\Property(
-     *     property="fullname",
+     *     property="first_name",
+     *     type="string"
+     *     ),
+     * @OA\Property(
+     *     property="last_name",
      *     type="string"
      *     ),
      * @OA\Property(
@@ -143,11 +147,10 @@ class AuthController extends Controller
 
                 if($user = $this->authenticator->attemptSignUp($credentials))
                 {
-                    
                     \Stripe\Stripe::setApiKey(config('services.stripe.secret'));
                     $customer = \Stripe\Customer::create(array(
                         'email' => $input['email'],
-                        'name' => $input['fullname'],
+                        'name' => $input['first_name'].' '.$input['last_name'],
                     ));
 
                     $update = User::where('id',$user['id'])->update(['customer_id' => $customer->id, 'device_token' => $input['device_token'], 'device_type' => $input['device_type']]);
@@ -447,7 +450,7 @@ class AuthController extends Controller
             //     return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             // }
 
-            $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
+            $user = User::select('id','first_name','last_name','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if($user)
             {
                 return $this->successResponse($user->toArray(),('Otp sent to your phone number.'));
@@ -540,7 +543,7 @@ class AuthController extends Controller
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
             
-            $user = User::select('id','fullname','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
+            $user = User::select('id','first_name','last_name','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array('User does not exist')]);
@@ -639,7 +642,7 @@ class AuthController extends Controller
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
             
-            $user = User::select('id','fullname','email','country_code','phone_number','password')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
+            $user = User::select('id','first_name','last_name','email','country_code','phone_number','password')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array('User does not exist')]);
@@ -743,7 +746,8 @@ class AuthController extends Controller
                 break;
             case 'signup':
                 $params = [
-                    'fullname' => 'required|min:3',
+                    'first_name' => 'required|min:3',
+                    'last_name' => 'required|min:3',
                     'email' => 'required|email|unique:users',
                     'country_code' => 'required',
                     'phone_number' => 'required|numeric|unique:users',

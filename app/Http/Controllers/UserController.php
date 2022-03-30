@@ -27,6 +27,13 @@ class UserController extends Controller
 
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('fullname', function($row){
+                    if($row->first_name && $row->last_name)
+                    {
+                        return $row->first_name.' '.$row->last_name;
+                    }
+                    return '-';
+                })
                 ->editColumn('phone_number', function($row){
                     return $row->phone_number;
                 })
@@ -38,7 +45,9 @@ class UserController extends Controller
                     
                     if (!empty($request->get('user_search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
-                            if (Str::contains(Str::lower($row['fullname']), Str::lower($request->get('user_search')))){
+                            if (Str::contains(Str::lower($row['first_name']), Str::lower($request->get('user_search')))){
+                                return true;
+                            }else if (Str::contains(Str::lower($row['last_name']), Str::lower($request->get('user_search')))){
                                 return true;
                             }else if (Str::contains(Str::lower($row['email']), Str::lower($request->get('user_search')))){
                                 return true;
