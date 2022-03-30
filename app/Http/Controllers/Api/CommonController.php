@@ -1611,7 +1611,7 @@ class CommonController extends Controller
             }
             else
             {
-                return response()->json(['status' => "true",'data' => "", 'messages' => array('Please complete your profile before upload your product for sell.')]);
+                return response()->json(['status' => "false",'data' => "", 'messages' => array('Please complete your profile before upload your product for sell.')]);
             }
 
         } catch (Exception $e) {
