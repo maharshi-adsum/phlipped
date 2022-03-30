@@ -211,13 +211,14 @@ class UserController extends Controller
             }
 
             $user = User::where('id',$input['user_id'])->first();
-            $user->first_name = $input['first_name'];
-            $user->last_name = $input['last_name'];
-            $user->email = $input['email'];
-            $user->dob = $input['dob'];
-            $user->ssn_last_4 = $input['email'];
-            $user->routing_number = $input['routing_number'];
-            $user->account_number = $input['account_number'];
+            $user->first_name = $input['first_name'] ?? $user->first_name;
+            $user->last_name = $input['last_name'] ?? $user->last_name;
+            $user->email = $input['email'] ?? $user->email;
+            $user->dob = $input['dob'] ?? $user->dob;
+            $user->ssn_last_4 = $input['ssn_last_4'] ?? $user->ssn_last_4;
+            $user->routing_number = $input['routing_number'] ?? $user->routing_number;
+            $user->account_number = $input['account_number'] ?? $user->account_number;
+            
             if($request->hasfile('user_image'))
             {
                 if($user)
@@ -241,6 +242,11 @@ class UserController extends Controller
 
             if($user)
             {
+                $checkProfile = ($user->first_name && $user->last_name && $user->email && $user->phone_number && $user->customer_id && $user->dob && $user->ssn_last_4 && $user->routing_number && $user->account_number && $user->street && $user->city && $user->state && $user->country && $user->pincode);
+                $user->is_verified = $checkProfile ? 1 : 0;
+                $user->save();
+
+                unset($user['is_verified']);
                 unset($user['email_verified_at']);
                 unset($user['device_token']);
                 unset($user['device_type']);
@@ -361,6 +367,19 @@ class UserController extends Controller
                 $addUpdateAddress->country = $input['country'];
                 $addUpdateAddress->pincode = $input['pincode'];
                 $addUpdateAddress->save();
+
+                $checkProfile = ($addUpdateAddress->first_name && $addUpdateAddress->last_name && $addUpdateAddress->email && $addUpdateAddress->phone_number && $addUpdateAddress->customer_id && $addUpdateAddress->dob && $addUpdateAddress->ssn_last_4 && $addUpdateAddress->routing_number && $addUpdateAddress->account_number && $addUpdateAddress->street && $addUpdateAddress->city && $addUpdateAddress->state && $addUpdateAddress->country && $addUpdateAddress->pincode);
+                $addUpdateAddress->is_verified = $checkProfile ? 1 : 0;
+                $addUpdateAddress->save();
+
+                unset($addUpdateAddress['is_verified']);
+                unset($addUpdateAddress['email_verified_at']);
+                unset($addUpdateAddress['device_token']);
+                unset($addUpdateAddress['device_type']);
+                unset($addUpdateAddress['is_active']);
+                unset($addUpdateAddress['created_at']);
+                unset($addUpdateAddress['updated_at']);
+
                 return response()->json(['status' => "true",'data' => $addUpdateAddress->toArray(), 'messages' => array('Address successfully saved')]);
             }
             else
@@ -384,7 +403,6 @@ class UserController extends Controller
                     'first_name' => 'required',
                     'last_name' => 'required',
                     'email' => 'required',
-                    'user_image' => 'required',
                 ];
                 break;
             case 'user_profile_get':
