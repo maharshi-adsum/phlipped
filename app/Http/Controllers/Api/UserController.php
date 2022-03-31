@@ -246,6 +246,15 @@ class UserController extends Controller
                 $user->is_verified = $checkProfile ? 1 : 0;
                 $user->save();
 
+                if($checkProfile && !($user->stripe_account))
+                {
+                    $this->createBankAccount($user);
+                }
+
+                unset($user['stripe_account']);
+                unset($user['bank_account_token']);
+                unset($user['bank_account']);
+                unset($user['external_account']);
                 unset($user['is_verified']);
                 unset($user['email_verified_at']);
                 unset($user['device_token']);
@@ -372,6 +381,15 @@ class UserController extends Controller
                 $addUpdateAddress->is_verified = $checkProfile ? 1 : 0;
                 $addUpdateAddress->save();
 
+                if($checkProfile && !($addUpdateAddress->stripe_account))
+                {
+                    $this->createBankAccount($addUpdateAddress);
+                }
+
+                unset($addUpdateAddress['stripe_account']);
+                unset($addUpdateAddress['bank_account_token']);
+                unset($addUpdateAddress['bank_account']);
+                unset($addUpdateAddress['external_account']);
                 unset($addUpdateAddress['is_verified']);
                 unset($addUpdateAddress['email_verified_at']);
                 unset($addUpdateAddress['device_token']);
@@ -393,6 +411,88 @@ class UserController extends Controller
             return $this->sendErrorResponse($e);
         }
     }
+
+    public function createBankAccount($data)
+    {
+        try {
+            $stripe_secret = config('services.stripe.secret');
+            $stripe = new \Stripe\StripeClient($stripe_secret);
+
+            $businessProfileData['mcc'] = '6012';
+            $businessProfileData['product_description'] = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+
+            $stripeAcc = $stripe->accounts->create([
+                'type'=>'custom',
+                'email' => $data['email'],
+                'business_type' => 'individual',
+                'tos_acceptance' => ['date' => strtotime(date('Y-m-d H:i:s')), 'ip' => '8.8.8.8'],
+                'requested_capabilities' => ['card_payments', 'transfers'],
+                'business_profile' => $businessProfileData,
+            ]);
+
+            $dob = explode('-',$data['dob']);
+
+            $individualData['first_name'] = $data['first_name'];
+            $individualData['last_name'] = $data['last_name'];
+            $individualData['dob']['day'] = $dob[2];
+            $individualData['dob']['month'] = $dob[1];
+            $individualData['dob']['year'] = $dob[0];
+            $individualData['address']['line1'] = $data['street'];
+            $individualData['address']['postal_code'] = $data['pincode'];
+            $individualData['address']['city'] = $data['city'];
+            $individualData['address']['state'] = $data['state'];
+            $individualData['email'] = $data['email'];
+            $individualData['phone'] = $data['phone_number'];
+            $individualData['ssn_last_4'] = $data['ssn_last_4'];
+
+            $stripeAcc = $stripe->accounts->update(
+                $stripeAcc->id,
+                ['individual' => $individualData]
+            );
+
+            $account_holder_name = $data['first_name'].' '.$data['last_name'];
+
+            $bank_account_token = $stripe->tokens->create([
+                'bank_account' => [
+                    'country' => 'US',
+                    'currency' => 'usd',
+                    'account_holder_name' => $account_holder_name,
+                    'account_holder_type' => 'individual',
+                    'routing_number' => $data['routing_number'],
+                    'account_number' => $data['account_number'],
+                ],
+            ]);
+            
+            $external_account = $stripe->accounts->createExternalAccount(
+                $stripeAcc->id,
+                [
+                    'external_account' => $bank_account_token->id,
+                ]
+            );
+
+            $data->stripe_account = $stripeAcc->id;
+            $data->bank_account_token = $bank_account_token->id;
+            $data->bank_account = $bank_account_token->bank_account->id;
+            $data->external_account = $external_account->id;
+            $data->save();
+
+            return 1;
+        } catch(\Stripe\Exception\CardException $e) {
+            return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
+        } catch (\Stripe\Exception\RateLimitException $e) {
+            return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
+        } catch (\Stripe\Exception\InvalidRequestException $e) {
+            return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
+        } catch (\Stripe\Exception\AuthenticationException $e) {
+            return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
+        } catch (\Stripe\Exception\ApiConnectionException $e) {
+            return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
+        } catch (Exception $e) {
+            return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
+        }
+    }
     
     public function requiredRequestParams(string $action, $id = '')
     {
@@ -402,7 +502,8 @@ class UserController extends Controller
                     'user_id' => 'required|exists:users,id',
                     'first_name' => 'required',
                     'last_name' => 'required',
-                    'email' => 'required',
+                    'email' => 'required|email',
+                    'dob' => 'nullable|date_format:Y-m-d',
                 ];
                 break;
             case 'user_profile_get':
