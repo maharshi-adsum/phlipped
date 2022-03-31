@@ -369,6 +369,10 @@ class AuthController extends Controller
         $success['expires_at'] = Carbon::parse(
             $tokenResult->token->expires_at
         )->toDateTimeString();
+        unset($user['stripe_account']);
+        unset($user['bank_account_token']);
+        unset($user['bank_account']);
+        unset($user['external_account']);
         $success['user'] = $user;
         return $success;
         // return $this->successResponse(
