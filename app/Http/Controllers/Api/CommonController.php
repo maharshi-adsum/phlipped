@@ -90,7 +90,7 @@ class CommonController extends Controller
 
             $requiredParams = $this->requiredRequestParams('got_one_product');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "true", 'data' => [], 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -217,7 +217,7 @@ class CommonController extends Controller
 
             $requiredParams = $this->requiredRequestParams('common_validation');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -236,13 +236,13 @@ class CommonController extends Controller
                 {
                     array_push($image_array_store, asset("public/upload/buyer_product_images/".$image_name));
                 }
-    
+
                 $data['buyer_product_id'] = $gotOnebuyerProductGet->id;
                 $data['buyer_product_name'] = $gotOnebuyerProductGet->buyer_product_name;
                 $data['buyer_product_description'] = $gotOnebuyerProductGet->buyer_product_description;
                 $data['buyer_product_status'] = $gotOnebuyerProductGet->buyer_product_status;
                 $data['buyer_product_images'] = $image_array_store;
-    
+
                 return response()->json(['status' => "true",'data' => $data, 'messages' => array('Got one product list found')]);
             }
             else
@@ -322,7 +322,7 @@ class CommonController extends Controller
 
             $requiredParams = $this->requiredRequestParams('common_validation');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -333,7 +333,7 @@ class CommonController extends Controller
             }
             $admin = Admin::first();
             $sellerProduct = SellerProducts::with('wishlist')->where('is_purchased',0)->where('is_active',1)->where('user_id','!=',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->where('created_at', '>=', Carbon::now()->subDays($admin->seller_days))->orderBy('id', 'DESC');
-            
+
             $sellerProductGet = $sellerProduct->get();
             if(!$sellerProductGet->isEmpty())
             {
@@ -345,7 +345,7 @@ class CommonController extends Controller
                     {
                         $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
                     }
-        
+
                     $data['seller_product_id'] = $sellerData->id;
                     $data['buyer_product_id'] = $sellerData->buyer_product_id;
                     $data['seller_product_name'] = $sellerData->seller_product_name;
@@ -355,7 +355,7 @@ class CommonController extends Controller
                     array_push($seller_approve_data, $data);
                 }
                 $sellerProductCount = count($seller_approve_data);
-    
+
                 return response()->json(['status' => "true",'data' => ['seller_product_count' => $sellerProductCount, 'seller_product_data' => $seller_approve_data] , 'messages' => array('Seller product list found')]);
             }
             else
@@ -476,7 +476,7 @@ class CommonController extends Controller
                     {
                         $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
                     }
-        
+
                     $data['seller_product_id'] = $sellerData['id'];
                     $data['buyer_product_id'] = $sellerData['buyer_product_id'];
                     $data['seller_product_name'] = $sellerData['seller_product_name'];
@@ -488,7 +488,7 @@ class CommonController extends Controller
                 }
                 $sellerProductCount = count($seller_approve_data);
                 $sellerProduct['data'] = $seller_approve_data;
-    
+
                 return response()->json(['status' => "true",'data' => $sellerProduct , 'messages' => array('Seller product list found')]);
             }
             else
@@ -572,7 +572,7 @@ class CommonController extends Controller
 
             $requiredParams = $this->requiredRequestParams('seller_one_product_list');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -591,7 +591,7 @@ class CommonController extends Controller
                 {
                     array_push($image_array_store, asset("public/upload/seller_product_images/".$image_name));
                 }
-    
+
                 $userDetails = User::where('id',$sellerProduct->user_id)->first();
                 $data['user_id'] = $sellerProduct->user_id;
                 $data['first_name'] = $userDetails->first_name;
@@ -612,7 +612,7 @@ class CommonController extends Controller
                 $data['return_policy'] = $sellerProduct->return_policy ? $sellerProduct->return_policy : '';
                 $data['wishlist_status'] = $sellerProduct->wishlist ? $sellerProduct->wishlist->status : 0;
                 $data['is_purchased'] = $sellerProduct->is_purchased ? 1 : 0;
-    
+
                 return response()->json(['status' => "true",'data' => $data , 'messages' => array('Seller product found')]);
             }
             else
@@ -694,7 +694,7 @@ class CommonController extends Controller
             }
 
             $buyerProduct = BuyerProducts::where('id',$input['buyer_product_id'])->where('user_id',$input['user_id'])->where('purchased_user_id',0)->where('is_active',1)->first();
-            
+
             if($buyerProduct)
             {
                 $buyerProduct->is_active = 0;
@@ -712,7 +712,7 @@ class CommonController extends Controller
             return $this->sendErrorResponse($e);
         }
     }
-    
+
     /**
      * Swagger defination Seller Product Delete
      *
@@ -780,7 +780,7 @@ class CommonController extends Controller
             }
 
             $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('user_id',$input['user_id'])->where('is_active',1)->where('is_purchased',0)->first();
-            
+
             if($sellerProduct)
             {
                 $sellerProduct->is_active = 0;
@@ -991,7 +991,7 @@ class CommonController extends Controller
                         {
                             $seller_image = asset("public/upload/seller_thumbnail/".$image_name[0]);
                         }
-            
+
                         $data['seller_product_id'] = $sellerData->id;
                         $data['buyer_product_id'] = $sellerData->buyer_product_id;
                         $data['seller_product_name'] = $sellerData->seller_product_name;
@@ -1001,14 +1001,14 @@ class CommonController extends Controller
                         array_push($seller_approve_data, $data);
                     }
                     $sellerProductCount = count($seller_approve_data);
-        
+
                     return response()->json(['status' => "true",'data' => ['wishlist_count' => $sellerProductCount, 'wishlist_data' => $seller_approve_data] , 'messages' => array('Your wishlist data found')]);
                 }
                 else
                 {
                     return response()->json(['status' => "true", 'data' => ['wishlist_count' => 0, 'wishlist_data' => array()], 'messages' => array('Your wishlist is empty!')]);
                 }
-                
+
             }
             else
             {
@@ -1098,6 +1098,8 @@ class CommonController extends Controller
     public function payment(Request $request)
     {
         try{
+            $stripe_secret = config('services.stripe.secret');
+            $stripe = new \Stripe\StripeClient($stripe_secret);
             $input = $request->all();
 
             if($input['user_id'] != Auth::user()->id)
@@ -1112,6 +1114,8 @@ class CommonController extends Controller
             }
 
             $sellerProduct = SellerProducts::where('id',$input['seller_product_id'])->where('is_active',1)->where('buyer_product_id',$input['buyer_product_id'])->where('seller_product_status',1)->first();
+            $adminCommission = ($sellerProduct->seller_product_price*Admin::first()->commission)/100;
+            $sellerAmount = $sellerProduct->seller_product_price - $adminCommission;
 
             if($sellerProduct)
             {
@@ -1135,7 +1139,14 @@ class CommonController extends Controller
 
                     $sellerProduct->is_purchased = $input['user_id'];
                     $sellerProduct->save();
-                    
+
+                    $stripe->transfers->create([
+                        'amount' => $sellerAmount*100,
+                        'currency' => 'usd',
+                        'destination' => Auth::user()->stripe_account,
+                        'transfer_group' => 'ORDER_95',
+                    ]);
+
                     return response()->json(['status' => "true",'data' => $paymentCreate, 'messages' => array('Product successfully purchased')]);
                 }
                 else
@@ -1251,7 +1262,7 @@ class CommonController extends Controller
             // {
             //     $product_array = array();
             //     foreach($buyerProductGet as $data)
-            //     {                    
+            //     {
             //         $product_data['buyer_product_id'] = $data['id'];
             //         $product_data['buyer_product_name'] = $data['buyer_product_name'];
             //         $product_data['buyer_product_description'] = $data['buyer_product_description'];
@@ -1523,7 +1534,7 @@ class CommonController extends Controller
     {
         try{
             $input = $request->all();
-            
+
             if($input['user_id'] != Auth::user()->id)
             {
                 return $this->sendBadRequest('Unauthorized access');
@@ -1597,7 +1608,7 @@ class CommonController extends Controller
     {
         try{
             $input = $request->all();
-            
+
             if($input['user_id'] != Auth::user()->id)
             {
                 return $this->sendBadRequest('Unauthorized access');
