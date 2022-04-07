@@ -193,7 +193,7 @@ class UserController extends Controller
 
             $requiredParams = $this->requiredRequestParams('user_profile_get');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -205,7 +205,7 @@ class UserController extends Controller
 
             $requiredParams = $this->requiredRequestParams('user_profile_update',$input['user_id']);
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -218,7 +218,7 @@ class UserController extends Controller
             $user->ssn_last_4 = $input['ssn_last_4'] ?? $user->ssn_last_4;
             $user->routing_number = $input['routing_number'] ?? $user->routing_number;
             $user->account_number = $input['account_number'] ?? $user->account_number;
-            
+
             if($request->hasfile('user_image'))
             {
                 if($user)
@@ -356,7 +356,7 @@ class UserController extends Controller
 
             $requiredParams = $this->requiredRequestParams('user_address_update');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -367,7 +367,7 @@ class UserController extends Controller
             }
 
             $addUpdateAddress = User::where('id',$input['user_id'])->first();
-            
+
             if($addUpdateAddress)
             {
                 $addUpdateAddress->street = $input['street'];
@@ -429,6 +429,8 @@ class UserController extends Controller
                 'requested_capabilities' => ['card_payments', 'transfers'],
                 'business_profile' => $businessProfileData,
             ]);
+            $data->stripe_account = $stripeAcc->id;
+            $data->save();
 
             $dob = explode('-',$data['dob']);
 
@@ -462,7 +464,7 @@ class UserController extends Controller
                     'account_number' => $data['account_number'],
                 ],
             ]);
-            
+
             $external_account = $stripe->accounts->createExternalAccount(
                 $stripeAcc->id,
                 [
@@ -493,7 +495,7 @@ class UserController extends Controller
             return response()->json(['status' => "false",'data' => "", 'messages' => array($e->getError()->message)]);
         }
     }
-    
+
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {
