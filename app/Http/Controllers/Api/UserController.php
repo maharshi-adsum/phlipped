@@ -420,20 +420,7 @@ class UserController extends Controller
 
             $businessProfileData['mcc'] = '6012';
             $businessProfileData['product_description'] = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
-
-            $stripeAcc = $stripe->accounts->create([
-                'type'=>'custom',
-                'email' => $data['email'],
-                'business_type' => 'individual',
-                'tos_acceptance' => ['date' => strtotime(date('Y-m-d H:i:s')), 'ip' => '8.8.8.8'],
-                'requested_capabilities' => ['card_payments', 'transfers'],
-                'business_profile' => $businessProfileData,
-            ]);
-            $data->stripe_account = $stripeAcc->id;
-            $data->save();
-
             $dob = explode('-',$data['dob']);
-
             $individualData['first_name'] = $data['first_name'];
             $individualData['last_name'] = $data['last_name'];
             $individualData['dob']['day'] = $dob[2];
@@ -447,10 +434,16 @@ class UserController extends Controller
             $individualData['phone'] = $data['phone_number'];
             $individualData['ssn_last_4'] = $data['ssn_last_4'];
 
-            $stripeAcc = $stripe->accounts->update(
-                $stripeAcc->id,
-                ['individual' => $individualData]
-            );
+
+            $stripeAcc = $stripe->accounts->create([
+                'type'=>'custom',
+                'email' => $data['email'],
+                'business_type' => 'individual',
+                'tos_acceptance' => ['date' => strtotime(date('Y-m-d H:i:s')), 'ip' => '8.8.8.8'],
+                'requested_capabilities' => ['card_payments', 'transfers'],
+                'business_profile' => $businessProfileData,
+                ['individual' => $individualData],
+            ]);
 
             $account_holder_name = $data['first_name'].' '.$data['last_name'];
 
