@@ -420,6 +420,22 @@ class UserController extends Controller
 
             $businessProfileData['mcc'] = '6012';
             $businessProfileData['product_description'] = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+
+            $stripeAcc = $stripe->accounts->create([
+                'type'=>'custom',
+                'email' => $data['email'],
+                'business_type' => 'individual',
+                'tos_acceptance' => ['date' => strtotime(date('Y-m-d H:i:s')), 'ip' => '8.8.8.8'],
+                'requested_capabilities' => ['card_payments', 'transfers'],
+                'business_profile' => $businessProfileData,
+            ]);
+
+            $fp = fopen(public_path('test.png'), 'r');
+            $file = $stripe->files->create([
+                'purpose' => 'identity_document',
+                'file' => $fp
+            ]);
+
             $dob = explode('-',$data['dob']);
             $individualData['first_name'] = $data['first_name'];
             $individualData['last_name'] = $data['last_name'];
@@ -432,18 +448,13 @@ class UserController extends Controller
             $individualData['address']['state'] = $data['state'];
             $individualData['email'] = $data['email'];
             $individualData['phone'] = $data['phone_number'];
-            $individualData['ssn_last_4'] = $data['ssn_last_4'];
+            $individualData['verification']['additional_document']['front'] = $file->id;
+            $individualData['ssn_last_4'] = '0000';
 
-
-            $stripeAcc = $stripe->accounts->create([
-                'type'=>'custom',
-                'email' => $data['email'],
-                'business_type' => 'individual',
-                'tos_acceptance' => ['date' => strtotime(date('Y-m-d H:i:s')), 'ip' => '8.8.8.8'],
-                'requested_capabilities' => ['card_payments', 'transfers'],
-                'business_profile' => $businessProfileData,
-                ['individual' => $individualData],
-            ]);
+            $stripeAcc = $stripe->accounts->update(
+                $stripeAcc->id,
+                ['individual' => $individualData]
+            );
 
             $account_holder_name = $data['first_name'].' '.$data['last_name'];
 
