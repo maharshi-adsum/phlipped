@@ -1613,10 +1613,19 @@ class CommonController extends Controller
             {
                 return $this->sendBadRequest('Unauthorized access');
             }
+            $user = User::where('id',$input['user_id'])->first();
+            if($user) {
+                if (!$user->ssn_last_4 || !$user->routing_number || !$user->account_number || !$user->dob) {
+                    return response()->json(['status' => "false", 'data' => "", 'messages' => array('Please complete your profile before upload your product for sell.')]);
+                }
+                if (!$user->street || !$user->city || !$user->state || !$user->country || !$user->pincode) {
+                    return response()->json(['status' => "false", 'data' => "", 'messages' => array('Please complete your address detail before upload your product for sell.')]);
+                }
+            }
 
-            $user = User::where('id',$input['user_id'])->where('is_verified',1)->first();
+            $userVerified = User::where('id',$input['user_id'])->where('is_verified',1)->first();
 
-            if($user)
+            if($userVerified)
             {
                 return response()->json(['status' => "true",'data' => "", 'messages' => array('Your Profile Completed')]);
             }
