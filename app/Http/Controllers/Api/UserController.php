@@ -242,26 +242,26 @@ class UserController extends Controller
 
             if($user)
             {
-                $checkProfile = ($user->first_name && $user->last_name && $user->email && $user->phone_number && $user->customer_id && $user->dob && $user->ssn_last_4 && $user->routing_number && $user->account_number && $user->street && $user->city && $user->state && $user->country && $user->pincode);
-                $user->is_verified = $checkProfile ? 1 : 0;
-                $user->save();
-
-                if($checkProfile && !($user->stripe_account))
-                {
-                    $this->createBankAccount($user);
-                }
-
-                unset($user['stripe_account']);
-                unset($user['bank_account_token']);
-                unset($user['bank_account']);
-                unset($user['external_account']);
-                unset($user['is_verified']);
-                unset($user['email_verified_at']);
-                unset($user['device_token']);
-                unset($user['device_type']);
-                unset($user['is_active']);
-                unset($user['created_at']);
-                unset($user['updated_at']);
+//                $checkProfile = ($user->first_name && $user->last_name && $user->email && $user->phone_number && $user->customer_id && $user->dob && $user->ssn_last_4 && $user->routing_number && $user->account_number && $user->street && $user->city && $user->state && $user->country && $user->pincode);
+//                $user->is_verified = $checkProfile ? 1 : 0;
+//                $user->save();
+//
+//                if($checkProfile && !($user->stripe_account))
+//                {
+//                    $this->createBankAccount($user);
+//                }
+//
+//                unset($user['stripe_account']);
+//                unset($user['bank_account_token']);
+//                unset($user['bank_account']);
+//                unset($user['external_account']);
+//                unset($user['is_verified']);
+//                unset($user['email_verified_at']);
+//                unset($user['device_token']);
+//                unset($user['device_type']);
+//                unset($user['is_active']);
+//                unset($user['created_at']);
+//                unset($user['updated_at']);
                 return response()->json(['status' => "true",'data' => $user->toArray(), 'messages' => array('User profile successfully saved')]);
             }
             else
@@ -381,22 +381,22 @@ class UserController extends Controller
                 $addUpdateAddress->is_verified = $checkProfile ? 1 : 0;
                 $addUpdateAddress->save();
 
-                if($checkProfile && !($addUpdateAddress->stripe_account))
-                {
-                    $this->createBankAccount($addUpdateAddress);
-                }
-
-                unset($addUpdateAddress['stripe_account']);
-                unset($addUpdateAddress['bank_account_token']);
-                unset($addUpdateAddress['bank_account']);
-                unset($addUpdateAddress['external_account']);
-                unset($addUpdateAddress['is_verified']);
-                unset($addUpdateAddress['email_verified_at']);
-                unset($addUpdateAddress['device_token']);
-                unset($addUpdateAddress['device_type']);
-                unset($addUpdateAddress['is_active']);
-                unset($addUpdateAddress['created_at']);
-                unset($addUpdateAddress['updated_at']);
+//                if($checkProfile && !($addUpdateAddress->stripe_account))
+//                {
+//                    $this->createBankAccount($addUpdateAddress);
+//                }
+//
+//                unset($addUpdateAddress['stripe_account']);
+//                unset($addUpdateAddress['bank_account_token']);
+//                unset($addUpdateAddress['bank_account']);
+//                unset($addUpdateAddress['external_account']);
+//                unset($addUpdateAddress['is_verified']);
+//                unset($addUpdateAddress['email_verified_at']);
+//                unset($addUpdateAddress['device_token']);
+//                unset($addUpdateAddress['device_type']);
+//                unset($addUpdateAddress['is_active']);
+//                unset($addUpdateAddress['created_at']);
+//                unset($addUpdateAddress['updated_at']);
 
                 return response()->json(['status' => "true",'data' => $addUpdateAddress->toArray(), 'messages' => array('Address successfully saved')]);
             }
