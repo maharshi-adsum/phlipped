@@ -121,7 +121,7 @@ class SellerProductController extends Controller
 
             $requiredParams = $this->requiredRequestParams('seller_post_product');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "true", 'data' => array(), 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -137,11 +137,11 @@ class SellerProductController extends Controller
                 return response()->json(['status' => "true",'data' => array(), 'messages' => array('Something went wrong!')]);
             }
 
-            $sellerProducts = SellerProducts::where('user_id',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('is_active',1)->first();
-            if($sellerProducts)
-            {
-                return response()->json(['status' => "true",'data' => array(), 'messages' => array('You have already posted for sale')]);
-            }
+//            $sellerProducts = SellerProducts::where('user_id',$input['user_id'])->where('buyer_product_id',$input['buyer_product_id'])->where('is_active',1)->first();
+//            if($sellerProducts)
+//            {
+//                return response()->json(['status' => "true",'data' => array(), 'messages' => array('You have already posted for sale')]);
+//            }
 
             $data['user_id'] = $input['user_id'];
             $data['buyer_product_id'] = $input['buyer_product_id'];
@@ -257,7 +257,7 @@ class SellerProductController extends Controller
 
             $requiredParams = $this->requiredRequestParams('seller_get_product');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -307,7 +307,7 @@ class SellerProductController extends Controller
             return $this->sendErrorResponse($e);
         }
     }
-    
+
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {

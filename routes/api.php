@@ -27,7 +27,7 @@ Route::namespace('Api')->group(
         //password
         Route::post('forgetpassword', 'AuthController@forgetPassword');
         Route::post('resetPassword','AuthController@resetPassword');
-        
+
         Route::group(
             ['middleware' => ['api', 'auth:admin,api']],
             function () {

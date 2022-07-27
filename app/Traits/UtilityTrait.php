@@ -121,7 +121,7 @@ trait UtilityTrait
 
         return false;
     }
-   
+
     /**
      * This will prepare Data for send email
      *
@@ -230,10 +230,10 @@ trait UtilityTrait
     //     return true;
     // }
 
-    public function random_strings($length_of_string) 
-    { 
-        $str_result = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz'; 
-        return substr(str_shuffle($str_result), 0, $length_of_string); 
+    public function random_strings($length_of_string)
+    {
+        $str_result = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnopqrstuvwxyz';
+        return substr(str_shuffle($str_result), 0, $length_of_string);
     }
 
     public function sendSingle($registration_ids, $message)
@@ -270,7 +270,7 @@ trait UtilityTrait
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($fields));
 
         $result = curl_exec($ch);
-        
+
         \Log::info("Cron is working 🤩".$result);
 
         curl_close($ch);

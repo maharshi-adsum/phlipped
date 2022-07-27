@@ -13,11 +13,11 @@
  *
  * @OA\Info(
  *     version="3.1",
- *     title="phlipped Project REST Service",@OA\Contact(name="phlipped", url="http://localhost/phlipped/phlipped/")
+ *     title="phlipped Project REST Service",@OA\Contact(name="phlipped", url="http://localhost/phlipped/")
  * )
  * @OA\Server(
  *     description="Local Server",
- *     url="http://localhost/phlipped/phlipped/api/"
+ *     url="http://localhost/phlipped/api/"
  * ),
  * @OA\Server(
  *     description="Dev Server",

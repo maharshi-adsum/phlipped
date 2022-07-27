@@ -126,14 +126,14 @@ class AuthController extends Controller
     {
         try{
             $input = $this->objectToArray($request->input());
-            
+
             $requiredParams = $this->requiredRequestParams('signup');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
             $input['password'] = Hash::make($input['password']);
-            
+
             $user_create = User::create($input);
             $user = User::find($user_create->id);
             if($user)
@@ -235,7 +235,7 @@ class AuthController extends Controller
     {
         try{
             $input = $this->objectToArray($request->input());
-            
+
             $requiredParams = $this->requiredRequestParams('uniqueValidation');
             $validator = Validator::make($input, $requiredParams);
             if ($validator->fails()) {
@@ -331,7 +331,7 @@ class AuthController extends Controller
             $credentials = array_values(
                 $this->request->only('country_code','phone_number','password')
             );
-            
+
             $credentials['country_code'] = $input['country_code'];
             $credentials['phone_number'] = $input['phone_number'];
             $credentials['password'] = $input['password'];
@@ -546,7 +546,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
-            
+
             $user = User::select('id','first_name','last_name','email','country_code','phone_number')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {
@@ -555,7 +555,7 @@ class AuthController extends Controller
 
             $user->password = Hash::make($input['password']);
             $user->save();
-            
+
             return $this->successResponse($user->toArray(),('Your password changed successfully'));
 
         } catch (NotFoundHttpException $ex) {
@@ -645,7 +645,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
-            
+
             $user = User::select('id','first_name','last_name','email','country_code','phone_number','password')->where('country_code',$request->country_code)->where('phone_number',$request->phone_number)->first();
             if(!$user)
             {

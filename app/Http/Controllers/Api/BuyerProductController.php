@@ -91,7 +91,7 @@ class BuyerProductController extends Controller
             $requiredParams = $this->requiredRequestParams('buyer_post_product');
             $messsages = array('buyer_product_images.*.required'=>'The buyer product images field is required.');
             $validator = Validator::make($input, $requiredParams, $messsages);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -104,7 +104,7 @@ class BuyerProductController extends Controller
             $data['user_id'] = $input['user_id'];
             $data['buyer_product_name'] = $input['buyer_product_name'];
             $data['buyer_product_description'] = $input['buyer_product_description'];
-           
+
             if($request->hasfile('buyer_product_images'))
             {
                 foreach($request->file('buyer_product_images') as $file)
@@ -206,7 +206,7 @@ class BuyerProductController extends Controller
 
             $requiredParams = $this->requiredRequestParams('buyer_get_product');
             $validator = Validator::make($input, $requiredParams);
-            if ($validator->fails()) 
+            if ($validator->fails())
             {
                 return response()->json(['status' => "false", 'data' => "", 'messages' => array(implode(', ', $validator->errors()->all()))]);
             }
@@ -238,7 +238,7 @@ class BuyerProductController extends Controller
                     {
                         array_push($sellerProductPrice, 0);
                     }
-                    
+
                     $product_data['buyer_product_id'] = $data['id'];
                     $product_data['buyer_product_name'] = $data['buyer_product_name'];
                     $product_data['buyer_product_description'] = $data['buyer_product_description'];
@@ -253,7 +253,7 @@ class BuyerProductController extends Controller
                             array_push($image_array_store, asset("public/upload/buyer_thumbnail/".$image_name));
                         }
                     }
-                    $product_data['buyer_product_images'] = $image_array_store; 
+                    $product_data['buyer_product_images'] = $image_array_store;
                     array_push($product_array, $product_data);
                 }
                 return response()->json(['status' => "true", 'data' => $product_array, 'messages' => array('Buyer product list found')]);
@@ -269,7 +269,7 @@ class BuyerProductController extends Controller
             return $this->sendErrorResponse($e);
         }
     }
-    
+
     public function requiredRequestParams(string $action, $id = '')
     {
         switch ($action) {
